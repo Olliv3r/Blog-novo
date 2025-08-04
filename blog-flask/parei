@@ -1,0 +1,63 @@
+Parei:
+  - Na view do profile - Sobre o envio da foto de perfil do usuário pra salvar no database √
+  - Na view do profile - Sobre a exclusão da foto de perfil do usuário √
+  - Na separação .js de cada blueprint *
+  - Na atualização interna da senha do usuário no perfil √
+  - No painel no conteudo padrao e estastisticas *
+  - No carregamento de paginas que listam comentarios e artigos *
+  - Busca de usuarios no campo de pesquisa
+  - Busca de situaçôes de usuarios no campo de pesquisa
+  - Busca de papéis de usuarios no campo de pesquisa
+  - Carregar listagem de comentarios
+  - Carregar listagem de comentarios no buscador
+  - Carregar listagem de artigos
+  - Carregar listagem de artigos no buscador
+  - Modal de adicionar usuarios pelo painel admin, preenchendo valores padrão como papéis e situaçôes
+  - Cadastro de usuarios pelo painel admin
+  - Visualização de dados do usuario
+  - Excluir usuarios na modal
+  - Na aba de situacoes de usuarios (No visualizar situação)
+  - Na aba de situacoes de usuarios (No editar situação)
+  - Na aba de situacoes de usuarios (No excluir situação)
+  - Na aba de situacoes de usuarios (No adicionar situação)
+  
+  - Na aba de papeis de usuarios (No adicionar papel)
+  - Na aba de papeis de usuarios (No editar(na parte de preencher os campos padrão) papel)
+  - Na aba de editar papel
+  - Na aba excluir cargo
+  - Na aba comentarios, no adicionar artigo somente na parte do formulario, nada de modificar o DB
+  - Na parte de modelagem do modelo de artigos
+  - No _article.html
+  - Na modelagem dos Blocos de artigos (Em BlockType)
+Falta:
+  - Implementar salvar foto no database √
+  - Implementar exclusão da foto de perfil √
+  - Implementar atualizar a senha √
+  - Ver o próximo passo
+  - Painel
+  - Painel pra carregar paginas que listam um determinado recurso
+  - Painel pra carregar usuarios na pagina que carrega usuarios com pesquisador e paginacao. Em users.js ainda so carrega e formata a data.
+  - Revisar o view do 'users' e seguir implementando
+  - Carregamento de comentarios na pagina que carrega comentarios via jquery
+  - Carregamento de artigos na pagina que carrega artigos via jquery
+  - Excluir o usuario mas a modal de exclusão nao abre
+  - Revisar as views e js do users
+  - Listar no select os tipos de entidades na hora de adicionar uma situação
+  - Preencher os dados no formulario antes de editar
+  - Editar e excluir situação
+  - Implementar o adicionar dos papeis √
+  - Implementar o editar dos papeis √
+  - Implementar o visualizar dos papeis √
+  - Implementar o apagar dos papeis √
+  :---------------------------------------:
+  - Implementar o adicionar dos artigos *
+  - Modelar a base pra guardar tipos de blocos *
+Proximos:
+  - Listar(tanto no buscador quanto na paginação) comentarios e artigos √
+  - crud de usuarios pelo painel admin √
+  - Crud de situaçôes pelo painm admin √
+  - Crud de papeis pelo painm admin √
+  - Crud de comentarios pelo painm admin *
+  - Crud de artigos pelo painel admin *
+Lembretes:
+  - Falta adicionar uma verificação no editar do usuario pra evitar usar o nome de usuario ou email que ja está sendo usado por outros usuarios.

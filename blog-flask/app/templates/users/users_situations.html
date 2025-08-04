@@ -1,0 +1,155 @@
+{% from "bootstrap4/utils.html" import render_messages, render_static %}
+
+{% extends "sidebar.html" %}
+
+{% block dashboard_content %}
+
+<div class="d-flex align-items-center">
+  <div class="mr-auto p-2">
+    <h2 class="display-4 titulo">Situaçôes</h2>
+  </div>
+  <div class="p-2">
+    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddSituationUser">
+      Adicionar
+    </button>
+  </div>
+</div>
+
+<!-- Area de alertas personalizados -->
+<div id="alert" role="alert"></div> 
+
+<!-- Area de pesquisa interna -->
+<form class="d-flex mb-3 btn-group-sm" id="formSearchSituationUser">
+  <input class="form-control me-2" placeholder="Buscar pelo nome" name="word" id="word" aria-label="Search">
+</form>
+
+<!-- Conteúdo da tebela e paginação -->
+<div id="situations"></div>
+
+<!-- Modal (Adiciona uma situação de usuário) -->
+<div class="modal fade" id="modalAddSituationUser" tabindex="-1" aria-labelledby="modalAddSituationUserLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAddSituationUserLabel">Adicionar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" id="formAddSituationUser">
+          <div class="form-row p-3">
+            <div class="form-group col-12">
+              <label for="name" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="description" class="form-label">Descrição</label>
+              <input type="text" class="form-control" id="description" name="description" required>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="entity_type" class="form-label">Tipo de entidade</label>
+              <input type="text" class="form-control" id="entity_type" name="entity_type" value="user" disabled>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="btnAdd" type="submit" class="btn btn-success" form="formAddSituationUser">Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal (Visualiza uma situação de usuário) -->
+<div class="modal fade" id="modalViewSituationUser" tabindex="-1" aria-labelledby="modalViewSituationUserLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalViewSituationUserLabel">Visualizar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="spinner" class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Carregando...</span>
+          </div>
+        </div>
+        <div id="modal-content" class="d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="save" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal (Edita uma situação de usuário) -->
+<div class="modal fade" id="modalEditSituationUser" tabindex="-1" aria-labelledby="modalEditSituationUserLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditSituationUserLabel">Editar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" id="formEditSituationUser" method="POST">
+          <div class="form-row p-3">
+            <div class="form-group col-12">
+              <label for="name" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="description" class="form-label">Descrição</label>
+              <input type="text" class="form-control" id="description" name="description" required>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="entity_type" class="form-label">Tipo de entidade</label>
+              <input type="text" class="form-control" id="entity_type" name="entity_type" disabled>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="btnEdit" type="submit" class="btn btn-warning" form="formEditSituationUser">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal (Apaga uma situação de usuário) -->
+<div class="modal fade" id="modalDeleteSituationUser" tabindex="-1" aria-labelledby="modalDeleteSituationUserLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDeleteSituationUserLabel">APAGAR ÍTEM</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja apagar este ítem?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnConfirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+  {{ super() }}
+  {{ render_static("js", "js/situations_users.js") }}
+{% endblock %}

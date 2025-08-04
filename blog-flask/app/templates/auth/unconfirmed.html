@@ -1,0 +1,28 @@
+<!-- Importação de módulos bootatrap5 -->
+{% from "bootstrap4/utils.html" import render_static, render_messages %}
+
+<!-- Extende de base.html -->
+{% extends 'base.html' %}
+
+<!-- Inicio do bloco -->
+{% block content %}
+<div class="container mt-3">
+  <div class="unconfirm">
+    <div class="confirm-account">
+      {{ render_messages() }}
+      <img src="{{ url_for('static', filename='images/verify_email.png') }}" alt="Confirmar e-mail" class="img-fluid" width="75">
+      <h5>Verifique seu endereço de e-mail!</h5>
+      <p class="text-black-50">Para começar a usar sua conta, você precisa confirmar seu endereço de e-mail.</p>
+      <a href="https://mail.google.com" class="btn-confirm btn text-white w-100 mb-5" style="background-color: #0e4cb3;">Confirmar</a>
+      <p class="text-black-50">Se você não se inscreveu nesta conta, você pode ignorar este e-mail e a conta será excluída.</p>
+      <p class="text-black-50">Precisa de outro e-mail de confirmação? <a href="{{ url_for('auth.resend_confirm_account') }}">clique aqui</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+<!-- Fim do bloco -->
+
+<!-- CSS PERSONALIZADO -->
+{% block custom_css %} 
+  {{ render_static('css', 'css/unconfirmed.css') }} 
+{% endblock %}

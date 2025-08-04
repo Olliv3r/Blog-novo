@@ -1,0 +1,149 @@
+<form method="POST" data-edit-info-id="{{ current_user.id }}" id="edit_info" class="col-12 col-xl-8 group-one">
+  <h5 class="h5">Detalhes da Conta</h5>
+  
+  <div class="row">
+    <span class="col-md-6 mx-3" id="info_message"></span>
+    <span class="col-md-6 mx-3" id="email_message"></span>
+  </div>
+  
+  <div class="row">
+    <div class="form-group col-md-6">
+      <label for="name">Nome fantasia</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        id="name" 
+        name="name" 
+        value="{{ current_user.profile.name or '' }}" 
+        maxlength="60">
+    </div>
+    
+    <div class="form-group col-md-6" id="form-group">
+      <label for="email">E-mail <span class="text-danger"><strong>*</strong></span></label>
+
+      <div class="form-group col-md-6">
+        <div id="container_current_email">
+          <span style="color:#000 !important;">{{ current_user.email or current_user.new_email }}</span>
+          
+          {% if current_user.new_email and not current_user.email_confirmed and current_user.email_change_token %}
+            <div id="btn-group-dropdown" class="btn-group">
+              <button
+                class="btn btn-light btn-sm dropdown-toggle" 
+                type="button"
+                data-toggle="dropdown"
+                aria-expanded="false">
+                Opçôes
+              </button>
+              
+              <div class="dropdown-menu dropdown-menu-right">
+                <button 
+                  data-email="{{ current_user.new_email }}" 
+                  id="btn-email-resend"
+                  type="button"
+                  class="dropdown-item" 
+                  disabled>
+                  Reenviar email
+                </button>
+                
+                <button
+                  id="btn-email-cancel" 
+                  type="button" 
+                  class="dropdown-item">
+                  Cancelar email
+                </button>
+              </div>
+            </div>
+          {% else %}
+          <button 
+            id="btn-edit-email"
+            type="button" 
+            class="btn btn-sm btn-link text-dark border-0">Editar
+          </button>
+          {% endif %}
+        </div>
+        
+        {% if token %}
+        <span class="feedback-waiting badge badge-warning">Aguardando...</span>
+        {% endif %}
+        
+        <small 
+          id="emailHelp" 
+          class="form-text text-muted">
+          {% if current_user.email_change_token and token_message %}
+            <i>{{ token_message }}</i>
+          {% else %} 
+            <i>Solicite um link a cada 10 minutos</i>
+          {% endif %}
+        </small>
+      </div>
+      
+      <div 
+        id="group_new_email" 
+        style="display:none;" 
+        class="mb-3">
+        <input 
+          type="email"
+          class="form-control"
+          id="email"
+          name="email" 
+          value="{{ current_user.email or current_user.new_email }}" 
+          maxlength="120">
+        
+        <div class="form-group mt-3">
+          <button 
+            id="btn-confirm-email"
+            type="button"
+            class="btn btn-sm btn-success border-0"
+            data-email-id="{{ current_user.id }}">
+            Confirmar
+          </button>
+          
+          <button
+            id="btn-email-close"
+            type="button" 
+            class="btn btn-sm btn-danger border-0">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group col-md-6">
+      <label for="location">Localização</label>
+      <input 
+        type="text" 
+        class="form-control"
+        id="location" 
+        name="location"
+        value="{{ current_user.profile.location or '' }}">
+    </div>
+    
+    <div class="form-group col-md-6">
+      <label for="website">Webite</label>
+      <input 
+        type="url" 
+        class="form-control" 
+        id="website"
+        name="website"
+        value="{{ current_user.profile.website or '' }}" 
+        maxlength="100">
+    </div>
+
+    <div class="form-group col-md-12">
+      <label for="about_me">Sobre eu</label>
+      <textarea
+        class="form-control" 
+        name="about_me" 
+        id="about_me" 
+        maxlength="300">{{ current_user.profile.about_me or '' }}</textarea>
+    </div>
+  </div>
+  
+  <button
+    id="btn_edit_info" 
+    class="btn btn-warning"
+    type="submit" 
+    form="edit_info">
+    Atualizar
+  </button>
+</form>

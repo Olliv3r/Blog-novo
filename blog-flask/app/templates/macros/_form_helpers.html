@@ -1,0 +1,13 @@
+{% macro render_field(field, label_attrs={}, input_attrs={}) %}
+  <div class="form-group">
+    {{ field.label(**label_attrs) }}
+    {{ field(**input_attrs) }}
+    
+    {% for error in field.errors %}
+      <div class="invalid-feedback d-flex align-items-center g-2">
+        <i class="fas fa-exclamation-circle mr-1"></i>
+        {{ error }}
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}

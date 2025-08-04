@@ -1,0 +1,100 @@
+{% from "bootstrap4/utils.html" import render_messages, render_static %}
+
+{% extends "base.html" %}
+
+{% block sidebar %}
+<div class="d-flex header-sidebar">
+  <nav class="sidebar">
+    <ul class="list-unstyled">
+      <li>
+        <a href="{{ url_for('dashboard.dashboard') }}">
+          <i class="fa-solid fa-gauge"></i> Dashboard
+        </a>
+      </li>
+      
+      <li>
+        <a 
+          href="#submenu1" 
+          data-toggle="collapse" 
+          aria-expanded="false" 
+          class="dropdown-toggle">
+          <i class="fa-solid fa-user"></i> Usuário
+        </a>
+        
+        <ul id="submenu1" class="list-unstyled collapse">
+          <li class="{% if request.path == url_for('users.dashboard_users') %}active{% endif %}">
+            <a href="{{ url_for('users.dashboard_users') }}">
+              <i class="fa-solid fa-users"></i> Usuários
+            </a>
+          </li>
+  
+          <li class="{% if request.path == url_for('users.dashboard_users_situations') %}active{% endif %}">
+            <a href="{{ url_for('users.dashboard_users_situations') }}">
+              <i class="fa-solid fa-list-check"></i> Situações
+            </a>
+          </li>
+          
+          <li class="{% if request.path == url_for('users.dashboard_users_roles') %}active{% endif %}">
+            <a href="{{ url_for('users.dashboard_users_roles') }}">
+              <i class="fa-solid fa-key"></i> Papéis
+            </a>
+          </li>
+        </ul>
+      </li>
+      
+      <li>
+        <a 
+          href="#submenu3" 
+          data-toggle="collapse" 
+          aria-expanded="false" 
+          class="dropdown-toggle">
+          <i class="fa-solid fa-list"></i> Menu
+        </a>
+        
+        <ul id="submenu3" class="list-unstyled collapse">
+          <li class="{% if request.path == url_for('comments.dashboard_articles_comments') %}active{% endif %}">
+            <a href="{{ url_for('comments.dashboard_articles_comments') }}">
+              <i class="fa-solid fa-comment"></i> Comentários
+            </a>
+          </li>
+          
+          <li class="{% if request.path == url_for('articles.dashboard_articles') %}active{% endif %}">
+            <a href="{{ url_for('articles.dashboard_articles') }}">
+              <i class="fa-solid fa-file"></i> Artigos
+            </a>
+          </li>
+          
+          <li class="">
+            <a href="#">
+              <i class="fas fa-globe"></i> Situações globais
+            </a>
+          </li>
+          
+        </ul>
+      </li>
+        
+      <li>
+        <a href="{{ url_for('auth.logout') }}">
+          <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="content p-1 flex-grow-1">
+    <div class="list-group-item">
+      <div id="dashboard-content">
+        {% block dashboard_content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_css %}
+  {{ render_static('css', 'css/dashboard.css', local=True) }}
+{% endblock %}
+
+{% block custom_js %}
+  {{ render_static('js', 'js/dashboard.js', local=True) }}
+{% endblock %}

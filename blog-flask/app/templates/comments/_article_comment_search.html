@@ -1,0 +1,46 @@
+{% if comments %}
+<h4>Total: {{ total_result }}</h4>
+<table class="table table-sm table-responsive table-borderless table-hover">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Artigo</th>
+      <th scope="col">Autor</th>
+      <th scope="col">Situação</th>
+      <th scope="col">Criado</th>
+      <th scope="col">Ação</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for comment in comments %}
+    <tr>
+      <td>{{ comment.id }}</td>
+      <td>{{ comment.article.title }}</td>
+      <td>{{ comment.user.username }}</td>
+      <td>{{ comment.comment_situation.name }}...</td>
+      <td class="created">{{ comment.created }}</td>
+      <td>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-expanded="false">
+            Ação
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li>
+              <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalViewComment" data-view-comment-id="{{ comment.id }}">Visualizar</a>
+            </li>
+            <li>
+              <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalEditComment" data-edit-comment-id="{{ comment.id }}">Editar</a>
+            </li>
+            <li>
+              <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalDeleteComment" data-delete-comment-id="{{ comment.id }}">Apagar</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="lead">Nenhum comentário de artigo disponível!</p>
+{% endif %}

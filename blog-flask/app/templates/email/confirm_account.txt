@@ -1,0 +1,9 @@
+Olá {{ user.username }},
+
+Obrigado por se cadastrar! Para confirmar sua conta, acesse:
+
+{{ url_for('auth.confirm_account', token=token, _external=True) }}
+
+Se você não se cadastrou, ignore este e-mail.
+
+Link válido por 10 minutos, Depois que o link expirar, deverá solicitar outro para confirmar a sua conta.

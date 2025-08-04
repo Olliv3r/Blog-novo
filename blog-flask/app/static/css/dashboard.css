@@ -1,0 +1,134 @@
+body {
+  background-color: #eaeef2;
+}
+
+.menu-site li a i {
+  font-size: 0.8rem;
+}
+
+.size-icon {
+  color: #444;
+  font: 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.icon-row {
+  margin-bottom: 10px;
+}
+.ion {
+  -webkit-touch-callout: text;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.step {
+  display: inline-block;
+  line-height: 1;
+  position: relative;
+  width: 100%;
+}
+
+.step i {
+  -webkit-transition: opacity .3s;
+  -moz-transition: opacity .3s;
+  -ms-transition: opacity .3s;
+  -o-transition: opacity .3s;
+  transition: opacity .3s;
+}
+
+.step:hover i { opacity: .3; }
+
+.size-12 { font-size: 12px; }
+.size-14 { font-size: 14px; }
+.size-16 { font-size: 16px; }
+.size-18 { font-size: 18px; }
+.size-21 { font-size: 21px; }
+.size-24 { font-size: 24px; }
+.size-32 { font-size: 32px; }
+.size-48 { font-size: 48px; }
+.size-64 { font-size: 64px; }
+.size-96 { font-size: 96px; }
+
+
+.card-text {
+  line-height: 30px;
+  font-size: 0.95rem;
+}
+
+.header-menu {
+  color: #fff !important;
+}
+
+.sidebar .dropdown-toggle::after {
+  display: none !important;
+}
+
+.sidebar {
+  background-color: #222c3c;
+  max-width: 250px;
+  min-width: 250px;
+  min-height: calc(100vh - 56px);
+  transition: all 0.3s;
+}
+.sidebar ul li a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #c7cacc;
+  text-decoration: none;
+}
+
+.sidebar ul li a:hover, 
+.sidebar ul .active a {
+  color: #ecedee;
+  background-color: #354358;
+}
+
+.sidebar ul ul a {
+  padding-left: 2.5rem;
+  background-color: #1e2035;
+}
+
+.sidebar.toggled {
+  margin-left: -250px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    margin-left: -250px;
+  }
+  .sidebar.toggled {
+    margin-left: 0;
+  }
+}
+
+.sidebar [data-toggle="collapse"] {
+  position: relative;
+}
+.sidebar [data-toggle="collapse"]:before {
+  content: "\f0d7";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  right: 1rem;
+}
+
+.sidebar [aria-expanded="true"] {
+  background-color: #19222d;
+}
+.sidebar [aria-expanded="true"]:before {
+  transform: rotate(180deg);
+}
+#dashboard-content {
+  width: 100%;
+}
+.header-sidebar {
+  overflow: hidden;
+}
+.content {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* melhora em mobile */
+}
+.titulo {
+  font-size: 2.0rem !important;
+}

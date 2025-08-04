@@ -1,0 +1,58 @@
+{% from "bootstrap4/utils.html" import render_messages, render_static %}
+
+<!doctype html>
+<html lang="pt-br">
+  <head>
+  {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Place the first <script> tag in your HTML's <head> -->
+    
+    {% block styles %}
+      {{ render_static("css", "css/fontawesome.css", local=True) }}
+      {{ render_static("css", "css/style.css", local=True) }}
+      {{ render_static("css", "css/solid.css", local=True) }}
+      {{ render_static("css", "css/brands.css", local=True) }}
+      {{ render_static("css", "css/regular.css", local=True) }}
+      {{ render_static("css", "css/ionicons.min.css", local=True) }}
+      {% block custom_css %}{% endblock %}
+      {{ moment.include_moment() }}
+      {{ moment.locale("pt") }}
+      {{ bootstrap.load_css() }}
+    {% endblock %}
+    
+    <title>{{ title }}</title>
+  {% endblock %}
+  </head>
+  <body>
+    
+    {% if use_admin_layout %}
+      {% include "nav_admin.html" %}
+      {% block sidebar %}{% endblock %}
+    {% else %}
+      {% include "nav.html" %}
+    {% endif %}
+    
+    {% block content %}{% endblock %}
+    
+    {% if not use_admin_layout %}
+      {% include "footer.html" %}
+    {% endif %}
+
+    {% block scripts %}
+      {{ render_static("js", "js/jquery-3.7.1.js", local=True) }}
+      {{ bootstrap.load_js() }}
+      {{ render_static("js", "js/fontawesome.min.js", local=True) }}
+      {{ render_static("js", "js/alertt.js", local=True) }}
+      {{ render_static("js", "js/button.js", local=True) }}
+      {{ render_static("js", "js/formatNow.js", local=True) }}
+      
+      {% block custom_js %}{% endblock %}
+      
+      <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+      <script>eruda.init();</script>
+    {% endblock %}
+    
+  </body>
+</html>

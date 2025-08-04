@@ -1,0 +1,40 @@
+{% from "bootstrap4/form.html" import render_form %}
+{% from "bootstrap4/utils.html" import render_static, render_messages %}
+{% from "macros/_form_helpers.html" import render_field %}
+
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="form-container">
+    <h2>Inscrever-se</h2>
+    {{ render_messages() }}
+    <p>Digite seus dados de cadastro nos campos abaixo.</p>
+    
+    <form id="form-register" action="{{ url_for('auth.signup') }}" method="POST" accept-charset="utf-8">
+      {{ form.hidden_tag() }}
+      
+      {{ render_field(form.username, label_attrs={"for": "username"}, input_attrs={"placeholder": "Digite um nome de usuário"}) }}
+      
+      {{ render_field(form.email, label_attrs={"for": "email"}, input_attrs={"placeholder": "Digite seu melhor e-mail"}) }}
+      
+      {{ render_field(form.password, label_attrs={"for": "password"}, input_attrs={"placeholder": "Nova senha"}) }}
+      
+      {{ render_field(form.password2, label_attrs={"for": "password2"}, input_attrs={"placeholder": "Repita a nova senha"}) }}
+  
+      <p>
+        <i>Campo obrigatório</i> <span class="input-required">*</span>
+        </p>
+      
+      <div class="form-group">
+        {{ form.submit() }}
+      </div>
+      
+    </form>
+    <p>Ja tem conta? <a href="{{ url_for('auth.signin') }}">Acessar</a></p>
+  </div>
+
+{% endblock %}
+
+{% block custom_css %}
+  {{ render_static('css', 'css/login.css') }}
+{% endblock %}

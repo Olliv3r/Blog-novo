@@ -1,0 +1,50 @@
+{% if roles %}
+<h4>Total: {{ total_result }}</h4>
+
+<div class="table-responsive">
+<table class="table table-borderless table-hover">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nome</th>
+        <th scope="col" class="text-center">Qtd de usuários</th>
+        <th scope="col">Descricão</th>
+        <th scope="col">Criado</th>
+        <th scope="col">Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for role in roles %}
+      <tr>
+        <td>{{ role.id }}</td>
+        <td>{{ role.name }}</td>
+        <td class="text-center">{{ role.user_count }}</td>
+        <td>{{ role.description[0:30] }}...</td>
+        <td class="created">{{ role.created }}</td>
+        <td>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-expanded="false">
+              Ação
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li>
+                <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalViewRoleUser" data-view-role-user-id="{{ role.id }}">Visualizar</a>
+              </li>
+              <li>
+                <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalEditRoleUser" data-edit-role-user-id="{{ role.id }}">Editar</a>
+              </li>
+              <li>
+                <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalDeleteRoleUser" data-delete-role-user-id="{{ role.id }}">Apagar</a>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+
+<p class="lead">Nenhuma função de usuário disponível!</p>
+{% endif %}

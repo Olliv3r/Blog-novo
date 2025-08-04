@@ -1,0 +1,186 @@
+{% from "bootstrap4/utils.html" import render_messages, render_static %}
+
+{% extends "sidebar.html" %}
+
+{% block dashboard_content %}
+
+<div class="d-flex align-items-center">
+  <div class="mr-auto p-2">
+    <h2 class="display-4 titulo">Artigos</h2>
+  </div>
+  <div class="p-2">
+    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddArticle">
+      Adicionar
+    </button>
+  </div>
+</div>
+
+<!-- Area de alertas personalizados -->
+<div id="alert" role="alert"></div> 
+
+<!-- Area de pesquisa interna -->
+<form class="d-flex mb-3 btn-group-sm" id="formSearchArticle">
+  <input class="form-control me-2" type="text" placeholder="Buscar pelo autor" name="word" id="word" aria-label="Search">
+</form>
+
+<!-- Conteúdo da tabela e paginação -->
+<div id="articles"></div>
+
+<!-- MODAIS: -->
+
+<!-- Modal (Adiciona um artigo) -->
+<div class="modal fade" id="modalAddArticle" tabindex="-1" aria-labelledby="modalAddArticleLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAddArticleLabel">Adicionar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" id="formAddArticle" enctype="multipart/form-data">
+          <div class="form-row p-3 col-12">
+            <!-- Artigo -->
+            <div class="mb-3 col-12">
+              <label for="articleTitle" class="form-label">Título do Artigo</label>
+              <input type="text" class="form-control" name="article_title" id="articleTitle" required>
+            </div>
+
+            <!-- blocos dinâmicos aparecem aqui -->
+            <div id="blocksContainer"></div>
+  
+            <!-- Adicionar novo bloco -->
+            <div class="mb-3 col-12">
+              <label for="blockTypeSelect" class="form-label">Tipo de bloco</label>
+              
+              <select id="blockTypeSelect" class="form-control me-2">
+                <option value="text">Texto</option>
+                <option value="image">Imagem</option>
+                <option value="quote">Citação</option>
+              </select><br>
+              
+              <button type="button" class="btn btn-success btn-sm" id="addBlockBtn">Adicionar Bloco</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="btnSave" type="submit" class="btn btn-success" form="formAddUser">Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal edit article -->
+<div class="modal fade" id="modalEditArticle" tabindex="-1" aria-labelledby="modalEditArticleLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditArticleLabel">Editar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" id="formEditUser" method="POST">
+          <div class="form-row p-3">
+            <div class="form-group col-12">
+              <label for="name" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="name" name="name">
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="email" class="form-label">E-mail</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+              <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="situation_user" class="form-label">Situação</label>
+              <select id="situation_user" name="situation_user" class="form-control" required>
+              </select>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="role" class="form-label">Função</label>
+              <select id="role" name="role" class="form-control" required></select>
+            </div>
+            
+            <div class="form-group col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="confirmed" name="confirmed">
+                <label class="form-check-label" for="confirmed">
+                  Confirmar a conta
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="save" type="submit" data-save class="btn btn-warning" form="formEditUser">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal delete article -->
+<div class="modal fade" id="modalDeleteArticle" tabindex="-1" aria-labelledby="modalDeleteArticleLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDeleteArticleLabel">APAGAR ÍTEM</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja apagar este ítem?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="save">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal view article -->
+<div class="modal fade" id="modalViewArticle" tabindex="-1" aria-labelledby="modalViewArticleLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalViewArticleLabel">Visualizar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="spinner" class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Carregando...</span>
+          </div>
+        </div>
+        <div id="modal-content" class="d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="save" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+  {{ super() }}
+  {{ render_static("js", "js/articles.js") }}
+{% endblock %}
+
+{% block custom_cs %}
+  {{ super() }}
+  {{ render_static("css", "css/blog.css") }}
+{% endblock %}

@@ -1,0 +1,7 @@
+Querido(a) {{ user.username }}, Para confirmar seu novo e-mail, clique no link a seguir:
+
+{{ url_for('auth.confirm_email', token=token, _external=True) }}
+
+Se você não solicitou a confirmação de um novo e-mail, simplesmente ignore esta mensagem.
+
+Link válido por 10 minutos, Depois que o link expirar, deverá solicitar outro para confirmar o novo e-mail.

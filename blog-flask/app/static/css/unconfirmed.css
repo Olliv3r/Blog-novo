@@ -1,0 +1,42 @@
+.unconfirm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 75px);
+}
+.confirm-account,
+.error {
+  max-width: 400px;
+  width: 400px;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px 30px;
+}
+.error {
+  margin: 0 auto;
+}
+.confirm-account {
+  color: #fff;
+}
+
+.confirm-account img {
+  width: 75px;
+  margin: 20px 0;
+}
+.confirm-account h5 {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 20px;
+}
+.confirm-account .btn-confirm {
+  position: relative;
+  margin-bottom: 50px;
+}
+.confirm-account .btn-confirm:before {
+  content: "";
+  width: 50px;
+  border-bottom: 2px solid #ddd;
+  position: absolute;
+  bottom: -30px;
+}

@@ -1,0 +1,19 @@
+<!-- Importação de módulos bootatrap5 -->
+
+<!-- Extende de base.html -->
+{% extends 'base.html' %}
+
+<!-- Inicio do bloco -->
+{% block content %}
+<div class="container mt-3">
+  <h1>Index</h1>
+</div>
+{% endblock %}
+<!-- Fim do bloco -->
+
+<!-- CSS PERSONALIZADO -->
+{#
+{% block custom_css %} 
+  {{ render_static('css', 'css/style.css') }} 
+{% endblock %}
+#}

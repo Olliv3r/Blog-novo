@@ -1,0 +1,21 @@
+<div class="container" id="modal-content">
+  <dl class="row">
+    <dt class="col-4">Nome</dt>
+    <dd class="col-8">{{ user_role.name }}</dd>
+    
+    <dt class="col-4">Descrição</dt>
+    <dd class="col-8">{{ user_role.description }}</dd>
+  
+    <dt class="col-4">Qtd de usuário</dt>
+    <dd class="col-8">{{ user_role.user_count }}</dd>
+    
+    <dt class="col-4">Situação</dt>
+    <dd class="col-8">{{ user_role.role_situation.name|capitalize }}</dd>
+  
+    <dt class="col-4">Criado</dt>
+    <dd class="col-8"><span class="created">{{ user_role.created }}</span></dd>
+    
+    <dt class="col-4">Modificado</dt>
+    <dd class="col-8"><span class="modified">{{ user_role.modified }}</span></dd>
+  </dl>
+</div>

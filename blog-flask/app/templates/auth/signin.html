@@ -1,0 +1,46 @@
+{% from "bootstrap4/form.html" import render_form %}
+{% from "bootstrap4/utils.html" import render_static, render_messages %}
+
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="form-container">
+    <h2>Acessar</h2>
+    {{ render_messages() }}
+    <p>Digite seus dados de acesso nos campos abaixo.</p>
+  
+    <form id="form-login" action="{{ url_for('auth.signin') }}" method="POST">
+      {{ form.hidden_tag() }}
+      
+      <div class="form-group">
+        {{ form.email.label(for="email") }}
+        {{ form.email(placeholder="Seu e-mail", id="email") }}
+      </div>
+      
+      <div class="form-group">
+        {{ form.password.label(for="password") }}
+        {{ form.password(placeholder="Senha", id="password") }}
+      </div>
+    
+      <div class="form-group">
+        <a class="request_password" href="{{ url_for('auth.reset_password_request') }}">Esqueci minha senha</a>
+      </div>
+
+      <div class="form-group">
+        {{ form.remember_me.label(for="remember_me") }}
+        {{ form.remember_me(id="remember_me") }}
+      </div>
+      
+      <div class="form-group">   
+        {{ form.submit() }}
+      </div>
+    </form>
+
+    <p>Ainda não tem conta? <a href="{{ url_for('auth.signup') }}">criar</a></p>
+  </div>
+
+{% endblock %}
+
+{% block custom_css %}
+  {{ render_static('css', 'css/login.css') }}
+{% endblock %}

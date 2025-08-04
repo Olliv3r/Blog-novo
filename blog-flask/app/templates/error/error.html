@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-3">
+  <div class="error text-center">
+    <img src="{{ url_image }}" class="img-fluid">
+    <h5 class="h5 mt-3">{{ title_error }}</h5>
+    <p class="text-black-50">{{ text_error }}</p>
+    <p class="fw-bold text-left">Detalhes da requisição: <span class="text-danger bg-light p-1 text-break">{{ request.path }}</span></p>
+    <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-info text-center d-inline-block">Ir para o Início</a>
+  </div>
+</div>
+{% endblock %}

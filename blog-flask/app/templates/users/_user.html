@@ -1,0 +1,27 @@
+<div class="container" id="modal-content">
+  <dl class="row">
+    <dt class="col-4">Nome</dt>
+    <dd class="col-8">{{ user.profile.name or "Fulano" }}</dd>
+    
+    <dt class="col-4">Usuário</dt>
+    <dd class="col-8">{{ user.username }}</dd>
+    
+    <dt class="col-4">E-mail</dt>
+    <dd class="col-8">{{ user.email }}</dd>
+    
+    <dt class="col-4">Função</dt>
+    <dd class="col-8">{{ user.user_role.name }}</dd>
+    
+    <dt class="col-4">Situação</dt>
+    <dd class="col-8">{{ user.user_situation.name }}</dd>
+    
+    <dt class="col-4">Confirmado</dt>
+    <dd class="col-8">{% if user.confirmed %}Sim{% else %}Não{% endif %}</dd>
+    
+    <dt class="col-4">Criado</dt>
+    <dd class="col-8"><span class="created">{{ user.created }}</span></dd>
+    
+    <dt class="col-4">Modificado</dt>
+    <dd class="col-8"><span class="modified">{{ user.modified }}</span></dd>
+  </dl>
+</div>

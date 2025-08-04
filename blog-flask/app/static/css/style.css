@@ -1,0 +1,29 @@
+
+.footer {
+  width: 100%;
+  height: auto;
+  margin-top: 60px;
+}
+
+#footer-list {
+  text-align: center;
+}
+#footer-list li {
+  padding: 8px 0;
+}
+#footer-list li a {
+  color: #999;
+}
+#footer-list li a:hover {
+  color: red;
+}
+
+#copy {
+  text-align: center;
+  display: block;
+  color: #f8f9fa;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-top: 1px solid #222;
+  padding-top: 10px;
+}

@@ -1,0 +1,33 @@
+<style>
+  .email-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #007BFF;
+    color: #fff !important;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .email-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+</style>
+
+<p>Querido(a) {{ user.username }}</p>
+
+<p>Para confirmar seu novo e-mail, <a class="email-button" href="{{ url_for('auth.confirm_email', token=token, _external=True) }}">clique aqui</a>.
+</p>
+
+<p>Alternativamente, você pode colar o seguinte link na barra de endereço do seu navegador:</p>
+
+<p>{{ url_for('auth.confirm_email', token=token, _external=True) }}</p>
+
+<p>Se você não solicitou a confirmação de um novo.e-mail, simplesmente ignore esta mensagem.</p>
+
+<p>Link válido por 10 minutos, Depois que o link expirar, deverá solicitar outro para confirmar o novo e-mail.</p>
+<p>Sinceramente, A equipe Olive</p>
