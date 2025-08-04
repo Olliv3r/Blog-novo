@@ -277,14 +277,14 @@ class User(db.Model, UserMixin):
   def insert_users():
     users = [
       {
-        "username": "oliveradm", 
-        "email": "s23806119@gmail.com", 
-        "password": "45351285Evilor#"
+        "username": "", 
+        "email": "", 
+        "password": ""
       },
       {
-        "username": "oliver", 
-        "email": "oliver@example.com", 
-        "password": "45351285Evilor#"
+        "username": "", 
+        "email": "", 
+        "password": ""
       }
     ]
     
