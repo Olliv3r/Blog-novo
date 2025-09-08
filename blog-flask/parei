@@ -1,4 +1,6 @@
+
 Parei:
+  
   - Na view do profile - Sobre o envio da foto de perfil do usuário pra salvar no database √
   - Na view do profile - Sobre a exclusão da foto de perfil do usuário √
   - Na separação .js de cada blueprint *
@@ -29,6 +31,16 @@ Parei:
   - Na parte de modelagem do modelo de artigos
   - No _article.html
   - Na modelagem dos Blocos de artigos (Em BlockType)
+  - NAO SEI, ALGO COMO DEPURAR email
+  - Na modelagem de SocialMedia e Profile
+  - visualizar na sm pra visualizar informaçôes públicas
+  - No atualizar a senha do usuario pelo perfil
+  - Na estrutura do sidebar
+  - Perfil (tudo funcional com mudanças de regime)
+  - Nos cargos de usuarios, nos permissôes dos usuarios do painel administrador
+  - View salvar foto de perfil mas com bug de profile nao é atributo existente
+  - Select da imagem, no perfil
+  - Perfil e as 3 funcionalidades já estão quase prontas (digamos 99,99%)
 Falta:
   - Implementar salvar foto no database √
   - Implementar exclusão da foto de perfil √
@@ -52,6 +64,25 @@ Falta:
   :---------------------------------------:
   - Implementar o adicionar dos artigos *
   - Modelar a base pra guardar tipos de blocos *
+  :---------------------------------------:
+  
+  :---------------------------------------:
+  - Acrescentar redes sociais no perfil   :
+  :---------------------------------------:
+  
+  :---------------------------------------:
+  : - Falta terminar de Implementar o crud das redes sociais no perfil e revisar o atualizar a senha no perfil:
+  
+  - Implementar o crud pra gerenciar SocialMedia e Profile no dashboard
+  
+  - Atualizar a views.py relacionada ao painel administrativo para aceitar o novo regime
+  - Os usuarios, situaçôes e cargos foram implementado, falta o restante.
+  - No item perfis, exibir perfis e redes sociais, na modal edit de perfil
+  - Nas abas da modal editar redes sociais, lista de sms
+  - Aba foto de perfil da modal editar dados do perfil
+  - Restaurar a foto de preview após cancelar o select da imagem
+  - 3 botões já pré-configurados
+  - Implmentar a mesma lógica no perfil de usuários, expecificamente na foto, acrescenter o suporte para usar imagens online
 Proximos:
   - Listar(tanto no buscador quanto na paginação) comentarios e artigos √
   - crud de usuarios pelo painel admin √
@@ -59,5 +90,13 @@ Proximos:
   - Crud de papeis pelo painm admin √
   - Crud de comentarios pelo painm admin *
   - Crud de artigos pelo painel admin *
+  - Atualizar o crud dos usuarios
+  - Atualizar o crud do perfil e decidir se deixará perfil como item de menu
+  - Salvar as alteraçôes das redes sociais
+  - Salvar a imagem ou url da imagem online na base
 Lembretes:
   - Falta adicionar uma verificação no editar do usuario pra evitar usar o nome de usuario ou email que ja está sendo usado por outros usuarios.
+  - Decidir deixar submenu dentro de perfil como redes sociais e situacoes
+  - Decidir deixar ou remover o item perfil do menu do painel e se decidir deixá-lo no menu, falta decidir onde adicionar as midias sociais.
+  - mudar o avatar de user.avatar para user.profile.avatar
+  - Precisa resolver o bug do preview da nova imagem selecionada aparecer ao lado da imagem atual e nao substituí-la o que deveria acontecer. O bug ta no js 

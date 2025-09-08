@@ -1,0 +1,126 @@
+{% from "bootstrap4/utils.html" import render_static %}
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container user">
+  <div class="row">
+    <div class="col-10 col-md-4 mt-5 mb-5">
+      <h2>Perfil</h2>
+      <p class="lead">
+      	{% set occupation = "I'm a creative PHP webdeveloper" %}
+
+      	{% if user.profile.occupation %}
+      	  {{ user.profile.occupation }}
+      	{% else %}
+      	  {{ occupation }}
+      	{% endif %}
+      </p>
+    </div>
+  
+    <div class="col-12" id="user_data">
+      <div class="row">
+        <div class="col-md-4 col-12">
+          <h4 class="mb-3">SOBRE</h4>
+          {% if user.profile.about_me %}
+          <p class="lead text-black-50">{{ user.profile.about_me }}</p>
+          {% else %}
+          <p class="lead text-black-50">I am an allround web developer. I am a senior programmer with good knowledge of front-end techniques. Vitae sapien pellentesque habitant morbi tristique senectus et. Aenean sed adipiscing diam donec adipiscing tristique risus.</p>
+          {% endif %}
+        </div>
+        
+        <div class="col-md-4 col-12">
+          {% set image_url = user.profile.image_url %}
+          {% if image_url %} 
+            {% set image_url = url_for('static', filename=image_url) %}
+            {% else %}
+              {% set image_url = 'https://i.imgur.com/uIgDDDd.jpg' %}
+          {% endif %}
+        
+          <img class="rounded-circle img-fluid mb-5 mt-5" src="{{ image_url }}">
+        </div>
+        
+        <div class="col-md-4 col-12">
+          <h4 class="mb-3">DETALHES</h4>
+          <dl>
+            {% if user.profile.name %}
+            <dt>Nome</dt>
+            <dd>{{ user.profile.name }}</dd>
+            {% endif %}
+            {% if user.profile.age %}
+            <dt>Idade</dt>
+            <dd>{{ user.profile.age }}</dd>
+            {% endif %}
+            {% if user.profile.location %}
+            <dt>Localização</dt>
+            <dd>{{ user.profile.location }}</dd>
+            {% endif %}
+            {% if user.profile.website %}
+            <dt>Website</dt>
+            <dd>
+              <a href="{{ user.profile.website }}" target="_blank">
+                <i class="fa-solid fa-external-link-alt"></i>
+              </a>
+            </dd>
+            {% endif %}
+          </dl>
+          
+          <div class="user-links mt-3">
+          {% for sm in user.profile.social_media %}
+            <dt>Mídias Sociais</dt>
+            <dd class="pt-1">
+            {% if sm.is_active and sm.social_media_situation.name == 'Ativo' %}
+            <a href="{{ sm.url }}">
+              <i class="{% if sm.icon %}{{ sm.icon }}{% else %}fa-solid fa-hashtag{% endif %}"></i>
+            </a>
+            </dd>
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="user_message" class="col-12 col-md-4"></div>
+    {% if user != current_user %}
+    <div class="col-12 col-md-4 mt-3">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#messageModal">Mensagem</button>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Modal message -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="messageModalLabel">Enviar mensagem</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{#{{ url_for('users.send_message', recipient_id=user.id) }}#}" method="POST" id="formMessage">
+          <div class="form-group">
+            <label for="message">Mensagem para {{ user.name }}</label>
+            <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="send-message-button" form="formMessage">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+  {{ render_static('js', 'js/public_profile.js', local=True) }}
+{% endblock %}
+
+{% block custom_css %}
+  {{ render_static('css', 'css/public_profile.css', local=True) }}
+{% endblock %}

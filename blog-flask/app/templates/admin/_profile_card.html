@@ -1,0 +1,113 @@
+{% if profiles.items %}
+<!-- Visualização em Cards -->
+<div class="row">
+  {% for profile in profiles %}
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-id-card mr-2"></i> {{ profile.name or 'Fulano' }}
+        </h5>
+        
+        <span class="badge badge-{{ 'success' if profile.user.confirmed else 'warning' }}">
+          {{ 'Confirmado' if profile.user.confirmed else 'Pendente' }}
+        </span>
+      </div>
+      
+      <div class="card-body">
+        <!-- Avatar -->
+        {% set image_url = profile.image_url %}
+        
+        <div class="text-center mb-3">
+          {% if image_url %}
+            {% if image_url | check_url_type == 'external' %}
+              <img src="{{ image_url }}" class="rounded-circle" width="80" height="80" alt="Avatar">
+            {% else %}
+              <img src="{{ url_for('static', filename=image_url) }}" class="rounded-circle" width="80" height="80" alt="Avatar">
+            {% endif %}
+          {% else %}
+            <img src="{{ profile.user.avatar(128) }}" class="rounded-circle" width="80" height="80" alt="Avatar">
+          {% endif %}
+        </div>
+          
+        <!-- Informações básicas -->
+        <p class="card-text">
+          <i class="fas fa-user mr-2"></i><strong>Usuário:</strong> {{ profile.user.username }}
+        </p>
+        
+        {% if profile.occupation %}
+        <p class="card-text">
+          <i class="fas fa-briefcase mr-2"></i><strong>Ocupação:</strong> {{ profile.occupation }}
+        </p>
+        {% endif %}
+        
+        {% if profile.location %}
+        <p class="card-text">
+          <i class="fas fa-map-marker-alt mr-2"></i><strong>Localização:</strong> {{ profile.location }}
+        </p>
+        {% endif %}
+        
+        <!-- Redes Sociais -->
+        {% if profile.social_media %}
+        <div class="mt-3">
+          <h6><i class="fas fa-share-alt mr-2"></i>Redes Sociais:</h6>
+          <div>
+            {% for sm in profile.social_media %}
+            <a href="{{ sm.url }}" target="_blank" class="btn btn-sm btn-outline-primary mr-2 mb-2">
+              <i class="{{ sm.icon }}"></i>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="card-footer">
+        <small class="text-muted">
+          Criado em: {{ profile.created.strftime('%d/%m/%Y %H:%M') }}
+        </small>
+        <div class="mt-2">
+          <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" id="btnEdit" data-target="#modalEditProfile" data-edit-profile-id="{{ profile.id }}">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Paginação (se necessário) -->
+{% if profiles.has_prev or profiles.has_next %}
+<nav class="mt-5" aria-label="paginacao_profiles">
+  <ul class="pagination pagination-sm justify-content-center">
+    <li class="page-item{% if not profiles.has_prev %} disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('admin.profiles', page=profiles.prev_num) if profiles.has_prev else '#' }}" role="button">Anterior</a>
+    </li>
+    
+    {% for page_num in profiles.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+      {% if page_num %}
+        {% if page_num == profiles.page %}
+          <li class="page-item active" aria-current="page">
+            <span class="page-link">{{ page_num }}</span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.profiles', page=page_num) }}" role="button">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+      {% endif %}
+    {% endfor %}
+    
+    <li class="page-item{% if not profiles.has_next %} disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('admin.profiles', page=profiles.next_num) if profiles.has_next else '#' }}" role="button">Próximo</a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<p class="lead">Nenhum perfil disponível!</p>
+{% endif %}

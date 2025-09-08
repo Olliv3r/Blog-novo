@@ -130,6 +130,15 @@
     </div>
 
     <div class="form-group col-md-12">
+      <label for="occupation">Ocupação</label>
+      <textarea
+        class="form-control" 
+        name="occupation" 
+        id="occupation" 
+        maxlength="300">{{ current_user.profile.occupation or '' }}</textarea>
+    </div>
+
+    <div class="form-group col-md-12">
       <label for="about_me">Sobre eu</label>
       <textarea
         class="form-control" 
@@ -141,7 +150,7 @@
   
   <button
     id="btn_edit_info" 
-    class="btn btn-warning"
+    class="btn btn-sm btn-warning"
     type="submit" 
     form="edit_info">
     Atualizar

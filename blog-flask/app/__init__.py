@@ -15,9 +15,10 @@ login.login_message = u"Página restrita, faça login para ter acesso!"
 bootstrap = Bootstrap4()
 moment = Moment()
 mail = Mail()
-
+    
+    
 def get_upload_folder():
-  return os.path.join(current_app.root_path, "static", "images", "uploads", "profile")
+  return os.path.join(current_app.root_path, "static", "images", "uploads", "profiles")
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -32,29 +33,29 @@ def create_app(config_name):
     moment.init_app(app)
     mail.init_app(app)
     
+    # Erros
     from app.error import bp as error_bp
     app.register_blueprint(error_bp, url_prefix="/error")
 
+    # Autenticação
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix="/auth")
     
+    # Principal
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+    
+    # Perfil
     from app.profile import bp as profile_bp
     app.register_blueprint(profile_bp)
     
-    from app.dashboard import bp as dashboard_bp
-    app.register_blueprint(dashboard_bp)
+    # Sugestôes
+    from app.suggestions import bp as suggestions_bp
+    app.register_blueprint(suggestions_bp)
     
-    from app.users import bp as users_bp
-    app.register_blueprint(users_bp)
-    
-    from app.articles import bp as articles_bp
-    app.register_blueprint(articles_bp)
-    
-    from app.comments import bp as comments_bp
-    app.register_blueprint(comments_bp)
-    
-    from app.main import bp as main_bp
-    app.register_blueprint(main_bp)
+    # Admin
+    from app.admin import bp as admin_bp
+    app.register_blueprint(admin_bp)
     
     if not app.debug:
       if app.config["MAIL_SERVER"]:

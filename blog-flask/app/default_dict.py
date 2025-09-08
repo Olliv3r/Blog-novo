@@ -11,26 +11,15 @@ situations = [
   {"name": "Aguardando", "description": "Usuário está aguardando aprovação para ativação ou ativação de sua conta.", "entity_type": "user"},
   {"name": "Suspenso", "description": "Usuário foi temporariamente suspenso e não pode acessar o sistema até a suspensão ser levantada.", "entity_type": "user"},
 
-  # Situações para comentários
-  {"name": "Publicado", "description": "Comentário está visível publicamente e pode ser visto por todos os usuários.", "entity_type": "comment"},
-  {"name": "Aguardando", "description": "Comentário está aguardando moderação antes de ser publicado.", "entity_type": "comment"},
-  {"name": "Removido", "description": "Comentário foi removido e não está mais visível para os usuários.", "entity_type": "comment"},
+  # Situações para sugestôes
+  {"name": "Publicada", "description": "Comentário está visível publicamente e pode ser visto por todos os usuários.", "entity_type": "suggestion"},
+  {"name": "Aguardando", "description": "Comentário está aguardando moderação antes de ser publicado.", "entity_type": "suggestion"},
+  {"name": "Removida", "description": "Comentário foi removido e não está mais visível para os usuários.", "entity_type": "suggestion"},
 
-  # Situações para artigos
-  {"name": "Rascunho", "description": "Artigo ainda está sendo escrito e não é visível publicamente.", "entity_type": "article"},
-  {"name": "Publicado", "description": "Artigo foi publicado e está visível publicamente.", "entity_type": "article"},
-  {"name": "Arquivado", "description": "Artigo foi arquivado e não está mais disponível publicamente.", "entity_type": "article"},
-  {"name": "Aguardando revisão", "description": "Artigo está aguardando aprovação ou revisão editorial antes da publicação.", "entity_type": "article"}
-]
-block_types = [
-    {"name": "Parágrafo", "description": "Texto corrido usado para desenvolvimento do conteúdo."},
-    {"name": "Título", "description": "Título de uma seção ou parte do artigo."},
-    {"name": "Subtítulo", "description": "Subseção para organizar melhor o conteúdo."},
-    {"name": "Citação", "description": "Destaque para uma frase citada de outra fonte ou trecho importante."},
-    {"name": "Código", "description": "Bloco para exibir trechos de código com formatação especial."},
-    {"name": "Imagem", "description": "Inserção de uma imagem relevante para o artigo."},
-    {"name": "Lista", "description": "Bloco contendo uma lista ordenada ou não."},
-    {"name": "Aviso", "description": "Bloco visual para destacar avisos ou informações importantes."},
-    {"name": "Separador", "description": "Uma linha ou espaçamento visual para separar seções."},
-    {"name": "Tabela", "description": "Bloco para organizar dados em formato de tabela."}
+  # Situações para redes sociais
+  {"name": "Ativo", "description": "A rede social está ativa e os links estão visíveis para os usuários.", "entity_type": "social_media"},
+  {"name": "Inativo", "description": "A rede social está desativada e não aparece no perfil público.", "entity_type": "social_media"},
+  {"name": "Aguardando", "description": "A rede social foi adicionada mas ainda aguarda verificação ou aprovação.", "entity_type": "social_media"},
+  {"name": "Suspensa", "description": "A rede social foi temporariamente suspensa e não está acessível no momento.", "entity_type": "social_media"},
+  {"name": "Removida", "description": "A rede social foi removida do perfil e não está mais disponível.", "entity_type": "social_media"}
 ]

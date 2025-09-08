@@ -1,0 +1,74 @@
+{% if suggestions.items %}
+<table class="table table-responsive table-borderless table-hover">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Sugestão</th>
+      <th scope="col">Autor</th>
+      <th scope="col">Situação</th>
+      <th scope="col">Criado</th>
+      <th scope="col">Ação</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for suggestion in suggestions %}
+    <tr>
+      <td>{{ suggestion.id }}</td>
+      <td>{{ suggestion.article.title }}</td>
+      <td>{{ suggestion.user.username }}</td>
+      <td>{{ suggestion.suggestion_situation.name }}</td>
+      <td class="created">{{ suggestion.created }}</td>
+      <td>
+        
+        <div class="dropdown">
+          <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-expanded="false">
+            Ação
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li>
+              <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalViewSuggestion" data-view-suggestion-id="{{ suggestion.id }}">Visualizar</a>
+            </li>
+            <li>
+              <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalEditSuggestion" data-edit-suggestion-id="{{ suggestion.id }}">Editar</a>
+            </li>
+            <li>
+              <a class="dropdown-item" role="button" data-toggle="modal" data-target="#modalDeleteSuggestion" data-delete-suggestion-id="{{ suggestion.id }}">Apagar</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<nav aria-label="paginacao_suggestions">
+  <ul class="pagination pagination-sm justify-content-center">
+    <li class="page-item{% if not page_prev %} disabled{% endif %}">
+      <a data-page-prev="{{ page_prev }}" class="page-link" role="button">Anterior</a>
+    </li>
+    
+    {% for page_num in suggestions.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+      {% if page_num %}
+        {% if page_num == suggestions.page %}
+          <li class="page-item active" aria-current="page">
+            <span class="page-link">{{ page_num }}</span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" data-page-prev="{{ url_for('suggestions.dashboard_suggestions_render', page=page_num) }}" role="button">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% else %}
+        <span>...</span>
+      {% endif %}
+    {% endfor %}
+    
+    <li class="page-item{% if not page_next %} disabled{% endif %}">
+      <a data-page-next="{{ page_next }}" class="page-link" role="button">Próximo</a>
+    </li>
+  </ul>
+</nav>
+{% else %}
+<p class="lead">Nenhuma sugestão disponível!</p>
+{% endif %}

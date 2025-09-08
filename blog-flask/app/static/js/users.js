@@ -1,13 +1,15 @@
 $(document).ready(function() {
   //FUNÇÃO PRA CARREGAR LISTA USUÁRIOS NO PAINEL ADMIN
   function load_users() {
+    let $users = $("#users");
+    
     $.ajax({
-      url: "/dashboard/users/render",
+      url: "/admin/users/render",
       type: "GET",
       success: function(html) {
-        $("#users").html(html);
+        $users.html(html);
         
-        $("#users").find(".created").each(function() {
+        $users.find(".created").each(function() {
           let dataText = $(this).text();
           let formattedText = formatData(dataText);
           
@@ -37,7 +39,7 @@ $(document).ready(function() {
       }
     });
   }
-  
+
   //PAGINAR NA LISTA DE USUÁRIOS
   $("#users").on("click", "[data-page-prev], [data-page-next]", function() {
     let url = $(this).data("page-prev") || $(this).data("page-next");
@@ -48,9 +50,9 @@ $(document).ready(function() {
   //FUNÇÃO PRA CARREGAR USUÁRIOS PESQUISADOS
   function load_search_users(word) {
     $.ajax({
-      url: "/dashboard/users/search",
+      url: "/admin/users/search",
       type: "GET",
-      data: {word: word},
+      data: {q: word},
       success: function(html) {
         $("#users").html(html);
         
@@ -124,7 +126,7 @@ $(document).ready(function() {
     let select = $(this).find("#user_situation_id");
     
     $.ajax({
-      url: "/dashboard/users/situations/options",
+      url: "/admin/users/situations/options",
       type: "GET",
       success: function(data) {
         populateSelect(select, data, 5, true);
@@ -137,7 +139,7 @@ $(document).ready(function() {
     let select = $(this).find("#user_role_id");
     
     $.ajax({
-      url: "/dashboard/users/roles/options",
+      url: "/admin/users/roles/options",
       type: "GET",
       success: function(data) {
         populateSelect(select, data, 1, true);
@@ -157,7 +159,7 @@ $(document).ready(function() {
     button_status($btn, "Adicionando...");
     
     $.ajax({
-      url: "/dashboard/users/create",
+      url: "/admin/users/create",
       type: "POST",
       data: formData,
       processData: false,
@@ -186,7 +188,7 @@ $(document).ready(function() {
     $form.data("user_id", user_id);
     
     $.ajax({
-      url: `/dashboard/users/${user_id}/data`,
+      url: `/admin/users/${user_id}/data`,
       type: "GET",
       success: function(data) {
         //Guarda dados do servidor em constantes
@@ -226,7 +228,7 @@ $(document).ready(function() {
     button_status($btn, "Atualizando...");
     
     $.ajax({
-      url: `/dashboard/users/${user_id}/update`,
+      url: `/admin/users/${user_id}/update`,
       type: "POST",
       data: formData,
       processData: false,
@@ -254,7 +256,7 @@ $(document).ready(function() {
     
     setTimeout(() => {
     $.ajax({
-      url: `/dashboard/users/${user_id}/view`,
+      url: `/admin/users/${user_id}/view`,
       type: "GET",
       success: function(html) {
         $content.html(html);
@@ -292,7 +294,7 @@ $(document).ready(function() {
     button_status($btn, "Excluindo...");
     
     $.ajax({
-      url: `/dashboard/users/${user_id}/delete`,
+      url: `/admin/users/${user_id}/delete`,
       type: "POST",
       success: function(res) {
         button_status($btn, btnText, false);
@@ -305,4 +307,3 @@ $(document).ready(function() {
     });
   });
 });
-

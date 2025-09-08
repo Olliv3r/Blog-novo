@@ -1,0 +1,35 @@
+
+<div class="col-12 col-xl-8 group-one">
+  <div class="d-flex justify-content-between align-items-center mb-3" id="header-sm">
+    <h5 class="h5 m-0">Redes sociais</h5>
+    
+    <div class="add-sm-button">
+      <a class="btn btn-primary btn-sm form-add-sm" href="#addFormSm">Adicionar</a>
+    </div>
+  </div>
+  <div id="alert" class="col-12"></div>
+  
+  <div id="profile_list_sm" class="mb-3"></div>
+  
+  <!-- Formulário de adição -->
+  <form id="addFormSm" class="addFormSm" method="POST" style="display: none;" action="{{ url_for('profile.profile_social_media_create') }}">
+    <div class="form-group">
+      <label for="name" class="form-label">Nome</label>
+      <input type="text" id="name" class="form-control" name="name" placeholder="Ex: Facebook" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="url" class="form-label">URL</label>
+      <input type="url" id="url" class="form-control" name="url" placeholder="Ex: https://facebook.com/user_etc" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="icon" class="form-label">Ícone</label>
+      <br><small>Classes <strong>Fontawesome</strong></small>
+      <input type="text" id="icon" class="form-control" name="icon" placeholder="fas-solid fa-etc">
+    </div>
+
+    <button type="submit" form="addFormSm" class="btn btn-success btn-sm form-add-button">Adicionar</button>
+    <button type="button" class="btn btn-danger btn-sm form-cancel-button">Fechar</button>
+  </form>
+</div>

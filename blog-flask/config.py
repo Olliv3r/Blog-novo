@@ -15,6 +15,7 @@ class Config:
   PER_PAGE_USERS = PAGE
   PER_PAGE_SITUATIONS_USERS = PAGE
   PER_PAGE_ROLES = PAGE
+  PER_PAGE_PROFILES = PAGE
   
   # COMMENTS:
   PER_PAGE_COMMENTS = PAGE
@@ -30,5 +31,7 @@ class Config:
   MAIL_USERNAME = os.getenv("MAIL_USERNAME")
   MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
   
-  # IMAGES
-  ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg"]
+  # IMAGENS - Configurações de upload
+  # UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'images', 'uploads', 'profiles')
+  ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+  MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB

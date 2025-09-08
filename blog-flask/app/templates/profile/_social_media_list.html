@@ -1,0 +1,88 @@
+{% if social_medias %}
+  <!-- START social_media -->
+  <div id="social_media">
+  {% for sm in social_medias %}
+    <!-- START item N -->
+    <div class="item-sm" data-order-sm-id="{{ sm.id }}">
+      <!-- START d-flex -->
+      <div class="d-flex justify-content-between align-items-center bg-white py-2 px-3 border-1 text-black mb-3 ">
+        <div class="position-sm"><i class="fa-solid fa-bars"></i></div>
+      
+        <div class="icon">
+          <span><strong>{{ sm.name }}</strong></span><br>
+          <span><i class="{{ sm.icon or 'fa-solid fa-hashtag' }}"></i> {{ sm.url[0:20] }}…</span>
+        </div>
+        
+        <div class="custom-control custom-switch situation_sm">
+          <input type="checkbox" class="custom-control-input sit_sm" id="sit_sm{{ sm.id }}" data-sit-sm-id="{{ sm.id }}" {% if sm.
+          is_active %}checked{% endif %}>
+          <label class="custom-control-label" for="sit_sm{{ sm.id }}"></label>
+        </div>
+      
+        <div class="dropdown actions-sm">
+          <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item btn-view-form-sm" href="{{ url_for('profile.profile_user', username=sm.profile.user.username) }}" target="_blank"><i class="fa-solid fa-pen-to-square"></i> Visualizar</a>
+            <a class="dropdown-item btn-edit-form-sm" data-sm-id="{{ sm.id }}" href="#"><i class="fa-solid fa-pen"></i> Editar</a>
+            <a class="dropdown-item btn-delete-form-sm" href="#" data-toggle="modal" data-target="#deleteSmModal{{ sm.id }}"><i class="fa-solid fa-trash"></i> Excluir</a>
+          </div>
+        </div>
+      </div>
+      <!-- END d-flex -->
+      
+      <!-- START Form de edição -->
+      <form id="editFormSm{{ sm.id }}" class="editFormSm my-4" method="POST" style="display: none;" action="{{ url_for('profile.profile_social_media_update', sm_id=sm.id) }}">
+        <div class="form-group">
+          <label for="name{{ sm.id }}" class="form-label">Nome</label>
+          <input type="text" id="name{{ sm.id }}" class="form-control" value="{{ sm.name }}" name="name" placeholder="Facebook" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="url{{ sm.id }}" class="form-label">URL</label>
+          <input type="text" id="url{{ sm.id }}" class="form-control" value="{{ sm.url }}" name="url" placeholder="https://facebook.com/user_etc" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="icon{{ sm.id }}" class="form-label">Ícone</label><br>
+          <small>Classes <strong>Fontawesome</strong></small>
+          <input type="text" id="icon{{ sm.id }}" class="form-control" value="{{ sm.icon }}" name="icon" placeholder="fas-solid fa-etc">
+        </div>
+        
+        <input type="hidden" name="sm_id" value="{{ sm.id }}"/>
+        
+        <button type="submit" form="editFormSm{{ sm.id }}" class="btn btn-warning btn-sm btn-confirm-form-sm">Editar</button>
+        <button type="button" class="btn btn-sm btn-danger btn-cancel-form-sm" data-sm-id="{{ sm.id }}">Fechar</button>
+      </form>
+      <!-- END form de edição -->
+    
+      <!-- START Modal excluir sm -->
+      <div class="modal fade deleteSmModal" id="deleteSmModal{{ sm.id }}" tabindex="-1" aria-labelledby="deleteSmModal{{ sm.id }}Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteSmModal{{ sm.id }}Label">APAGAR ÍTEM</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Tem certeza que quer excluir este ítem?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Fechar</button>
+              <button type="button" class="btn btn-sm btn-danger btn-delete-modal-sm" data-delete-sm-id="{{ sm.id }}">Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END Modal excluir sm -->
+    </div>
+    <!-- END item N -->
+    {% endfor %}
+  {% else %}
+    <p>Nenhuma rede social encontrada!</p>
+  </div>
+  <!-- END social_media -->
+  {% endif %}

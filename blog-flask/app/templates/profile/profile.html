@@ -18,6 +18,16 @@
       <div id="profile_data_content" class="d-none"></div>
     </div>
     
+    <div class="col-12" id="profile_sm">
+      <div id="spinner" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Carregando...</span>
+        </div>
+      </div>
+      
+      <div id="profile_sm_content" class="d-none"></div>
+    </div>
+    
     <div class="col-12" id="profile_photo">
       <div id="spinner" class="text-center">
         <div class="spinner-border text-primary" role="status">
@@ -40,7 +50,7 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal pra selecionar e Recortar imagem -->
 <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -65,6 +75,7 @@
 {% endblock %}
 
 {% block custom_js %}
+  {{ render_static("js", "https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js", local=False) }}
   {{ render_static('js', 'js/alertt.js', local=True) }}
   {{ render_static('js', 'js/button.js', local=True) }}
   {{ render_static('js', 'js/cropper.min.js', local=True) }}

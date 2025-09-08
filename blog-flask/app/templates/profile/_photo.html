@@ -9,7 +9,7 @@
     <div class="col-12 col-xl-8">
       <div class="profile-image" id="card_image">
         <i class="fas fa-fw fa-user"></i>
-        {% set image_url = current_user.profile.profile_image_url %}
+        {% set image_url = current_user.profile.image_url %}
         
         {% if image_url %} 
           {% set image_url = url_for('static', filename=image_url) %}
@@ -17,14 +17,14 @@
             {% set image_url = 'https://i.imgur.com/uIgDDDd.jpg' %}
         {% endif %}
       
-        <img src="{{ image_url }}" style="{% if not current_user.profile.profile_image_url %}display:none;{% endif %}" id="croppedImagePreview">
+        <img src="{{ image_url }}" style="{% if not current_user.profile.image_url %}display:none;{% endif %}" id="croppedImagePreview">
       </div>
       
       <input type="file" style="display:none;" name="uploadImage" id="uploadImage" accept="image/jpeg, image/png">
       
       <div class="d-flex justify-content-center profile-buttons">
         <button data-user-id="{{ current_user.id }}" type="button" class="btn" id="uploadButton" disabled>Enviar</button>
-        <button data-user-id="{{ current_user.id }}" type="button" class="btn" id="deletePreviewButton" {% if not current_user.profile.profile_image_url %}disabled{% endif %}>Excluir</button>
+        <button data-user-id="{{ current_user.id }}" type="button" class="btn" id="deletePreviewButton" {% if not current_user.profile.image_url %}disabled{% endif %}>Excluir</button>
       </div>
       
       <p class="text-center text-black-50">Nota: Tamanho máximo 250px x 250px</p>

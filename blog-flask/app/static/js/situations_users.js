@@ -2,7 +2,7 @@ $(document).ready(function() {
   //FUNÇÃO PRA CARREGAR LISTA SITUAÇÔES DE USUÁRIOS NO PAINEL ADMIN
   function load_situations_users() {
     $.ajax({
-      url: "/dashboard/users/situations/render",
+      url: "/admin/users/situations/render",
       type: "GET",
       success: function(html) {
         $("#situations").html(html);
@@ -47,9 +47,9 @@ $(document).ready(function() {
   //FUNÇÃO PRA CARREGAR SITUAÇÔES DE USUÁRIOS PESQUISADOS
   function load_search_situations_users(word) {
     $.ajax({
-      url: "/dashboard/users/situations/search",
+      url: "/admin/users/situations/search",
       type: "GET",
-      data: {word: word},
+      data: {q: word},
       success: function(html) {
         $("#situations").html(html);
         
@@ -130,7 +130,7 @@ $(document).ready(function() {
     button_status($btn, "Adicionando...");
     
     $.ajax({
-      url: "/dashboard/situations/create",
+      url: "/admin/situations/create",
       type: "POST",
       data: formData,
       processData: false,
@@ -162,7 +162,7 @@ $(document).ready(function() {
     
     setTimeout(() => {
     $.ajax({
-      url: `/dashboard/users/situations/${situation_user_id}/view`,
+      url: `/admin/users/situations/${situation_user_id}/view`,
       type: "GET",
       success: function(html) {
         $content.html(html);
@@ -189,7 +189,7 @@ $(document).ready(function() {
     $form.data("situation_id", situation_id);
     
     $.ajax({
-      url: `/dashboard/users/situations/${situation_id}/data`,
+      url: `/admin/users/situations/${situation_id}/data`,
       type: "GET",
       success: function(data) {
         //Guarda dados do servidor em constantes
@@ -214,7 +214,7 @@ $(document).ready(function() {
     button_status($btn, "Atualizando...");
     
     $.ajax({
-      url: `/dashboard/situations/${situation_id}/update`,
+      url: `/admin/situations/${situation_id}/update`,
       type: "POST",
       data: formData,
       processData: false,
@@ -252,7 +252,7 @@ $(document).ready(function() {
     button_status($btn, "Excluindo...");
     
     $.ajax({
-      url: `/dashboard/situations/${situation_id}/delete`,
+      url: `/admin/situations/${situation_id}/delete`,
       type: "POST",
       success: function(res) {
         button_status($btn, btnText, false);

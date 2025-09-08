@@ -5,21 +5,21 @@ import sqlalchemy.orm as so
 from datetime import datetime
 from flask_login import UserMixin, AnonymousUserMixin
 from flask import current_app
-from app.default_dict import situations, block_types
+from app.default_dict import situations
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from time import time
 from hashlib import md5
-from slugify import slugify
 
+# Cadastra Situaçôes padrôes
 def populates_default_situations():
   for situation in situations:
     existing_situation = Situation.query.filter_by(name=situation["name"], entity_type=situation["entity_type"]).first()
     
     default_situation_role = "Ativo"
     default_situation_user = "Aguardando"
-    default_situation_comment = "Aguardando"
-    default_situation_article = "Aguardando revisão"
+    default_situation_suggestion = "Aguardando"
+    default_situation_sm = "Aguardando"
     
     if existing_situation is None:
       new_situation = Situation(name=situation["name"], description=situation["description"], entity_type=situation["entity_type"], default = False)
@@ -30,11 +30,11 @@ def populates_default_situations():
       elif situation["entity_type"] == "user":
         new_situation.default = (situation["name"] == default_situation_user)
         
-      elif situation["entity_type"] == "article":
-        new_situation.default = (situation["name"] == default_situation_article)
+      elif situation["entity_type"] == "suggestion":
+        new_situation.default = (situation["name"] == default_situation_suggestion)
         
-      elif situation["entity_type"] == "comment":
-        new_situation.default = (situation["name"] == default_situation_comment)
+      elif situation["entity_type"] == "social_media":
+        new_situation.default = (situation["name"] == default_situation_sm)
   
       db.session.add(new_situation)
   db.session.commit()
@@ -61,15 +61,17 @@ class Situation(db.Model):
     back_populates="user_situation",
     passive_deletes=True
   )
-  # Relacionamento Principal: Situation relacionado ao Article
-  articles: so.WriteOnlyMapped["Article"] = so.relationship(
-    back_populates="article_situation",
+  
+  # Relacionamento Principal: Situation relacionado ao Comment
+  suggestions: so.WriteOnlyMapped["Suggestion"] = so.relationship(
+    back_populates="suggestion_situation",
     passive_deletes=True
   )
-  # Relacionamento Principal: Situation relacionado ao Comment
-  comments: so.WriteOnlyMapped["Comment"] = so.relationship(
-    back_populates="comment_situation",
-    passive_deletes=True
+  
+  # Relacionamento principal: SocialMedia relacionado ao Situation
+  social_media: so.WriteOnlyMapped["SocialMedia"] = so.relationship(
+    back_populates = "social_media_situation", 
+    passive_deletes = True
   )
     
   created: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
@@ -213,14 +215,37 @@ class User(db.Model, UserMixin):
     uselist=False
   )
   
-  # Relacionamento Principal: User relacionado ao Article
-  articles: so.WriteOnlyMapped[Optional["Article"]] = so.relationship(
+  # Relacionamento Principal: User relacionado ao Comment
+  suggestions: so.WriteOnlyMapped[Optional["Suggestion"]] = so.relationship(
     back_populates="user",
     passive_deletes=True
   )
-  # Relacionamento Principal: User relacionado ao Comment
-  comments: so.WriteOnlyMapped[Optional["Comment"]] = so.relationship(
-    back_populates="user",
+  
+  # Relacionamento principal: Likes relacionado ao User
+  likes: so.WriteOnlyMapped["Likes"] = so.relationship(
+    back_populates = "user", 
+    passive_deletes = True
+  )
+  
+  last_message_read_time: so.Mapped[Optional[datetime]]
+
+  # Relacionamento principal: Message relacionado ao User
+  messages_sent: so.WriteOnlyMapped["Message"] = so.relationship(
+    foreign_keys="Message.sender_id",
+    back_populates = "messages_author",
+    passive_deletes=True
+  )
+
+  # Relacionamento principal: Message relacionado ao User
+  messages_received: so.WriteOnlyMapped["Message"] = so.relationship(
+    foreign_keys="Message.recipient_id",
+    back_populates = "messages_recipient",
+    passive_deletes=True
+  )
+  
+  # Relacionamento principal: Notification relacionado ao User
+  notifications: so.WriteOnlyMapped["Notification"] = so.relationship(
+    back_populates = "user",
     passive_deletes=True
   )
   
@@ -229,6 +254,11 @@ class User(db.Model, UserMixin):
   
   def __init__(self, **kwargs):
     super(User, self).__init__(**kwargs)
+    
+    # Cria um perfil vazio automático
+    if not self.profile:
+      with db.session.no_autoflush:
+        self.profile = Profile()
     
     if self.user_role is None:
       if self.email == current_app.config["BLOG_ADMIN"]:
@@ -277,14 +307,16 @@ class User(db.Model, UserMixin):
   def insert_users():
     users = [
       {
-        "username": "", 
-        "email": "", 
-        "password": ""
+        "username": "oliveradm", 
+        "email": "oliveradm@example.com", 
+        "password": "catcat",
+        "confirmed": True
       },
       {
-        "username": "", 
-        "email": "", 
-        "password": ""
+        "username": "lana", 
+        "email": "lana@example.com", 
+        "password": "catcat",
+        "confirmed": False
       }
     ]
     
@@ -293,7 +325,7 @@ class User(db.Model, UserMixin):
         user = User.query.filter_by(email=u["email"]).first()
         
         if user is None:
-          user = User(username=u["username"], email=u["email"])
+          user = User(username=u["username"], email=u["email"], confirmed=u["confirmed"])
           user.set_password(u["password"])
           db.session.add(user)
       db.session.commit()
@@ -391,10 +423,22 @@ class User(db.Model, UserMixin):
     digest = md5(self.email.lower().encode("utf-8")).hexdigest()
     return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}"
     
+  def unread_message_count(self):
+    last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
+    query = sa.select(Message).where(Message.messages_recipient == self, Message.timestamp > last_read_time)
+    return db.session.scalar(sa.select(sa.func.count()).select_from(query.subquery()))
+    
+  def add_notification(self, name, data):
+    db.session.execute(self.notifications.delete().where(Notification.name == name))
+    n = Notification(name=name, payload_json=json.dumps(data), user=self)
+    db.session.add(n)
+    return n
+    
 class Profile(db.Model):
   id: so.Mapped[int] = so.mapped_column(primary_key=True, index=True)
   name: so.Mapped[Optional[str]] = so.mapped_column(sa.String(60))
-  profile_image_url: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), unique=True)
+  image_url: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
+  occupation: so.Mapped[Optional[str]] = so.mapped_column(sa.Text)
   location: so.Mapped[Optional[str]] = so.mapped_column(sa.String(100))
   website: so.Mapped[Optional[str]] = so.mapped_column(sa.String(100))
   about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.Text)
@@ -404,163 +448,177 @@ class Profile(db.Model):
   )
   user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id))
   
-  created: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
-  modified: so.Mapped[Optional[datetime]] = so.mapped_column(default=datetime.utcnow)
-  
-class Article(db.Model):
-  id: so.Mapped[int] = so.mapped_column(primary_key=True, index=True)
-  title: so.Mapped[str] = so.mapped_column(sa.String(200))
-  slug: so.Mapped[str] = so.mapped_column(sa.String(200), unique=True)
-  
-  # Relacionamento Inverso: Article associado ao Situation
-  article_situation: so.Mapped[Situation] = so.relationship(
-    back_populates="articles"
-  )
-  article_situation_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Situation.id, ondelete="CASCADE"))
-  
-  # Relacionamento Inverso: Article associado ao User
-  user: so.Mapped[User] = so.relationship(
-    back_populates="articles"
-  )
-  user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id, ondelete="CASCADE"))
-  
-  # Relacionamento Principal: Article relacionado ao ArticleBlock
-  blocks: so.WriteOnlyMapped[Optional["ArticleBlock"]] = so.relationship(
-    back_populates="article",
-    cascade="all, delete-orphan"
-  )
-  
-  # Relacionamento Principal: Article relacionado ao Comment
-  comments: so.WriteOnlyMapped[Optional["Comment"]] = so.relationship(
-    back_populates="article",
+  # Relacionamento principal: SocialMedia associado ao Profile
+  social_media: so.Mapped[List["SocialMedia"]] = so.relationship(
+    back_populates="profile",
     passive_deletes=True
   )
   
   created: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
   modified: so.Mapped[Optional[datetime]] = so.mapped_column(default=datetime.utcnow)
   
-  def __init__(self, **kwargs):
-    super(Article, self).__init__(**kwargs)
-  
-    # Define a situação padrão do artigo
-    if self.article_situation is None:
-      self.article_situation = db.session.scalar(
-        sa.select(Situation).filter_by(default=True, entity_type="article")
-      )
-      
-    # Cria a slug do artigo automaticamente
-    if not self.slug and self.title:
-      self.slug = self.generate_unique_slug(self.title)
-      
-  @classmethod
-  def generate_unique_slug(cls, title):
-    base_slug = slugify(title)
-    slug = base_slug
-    
-    counter = 1
-    
-    query = sa.select(cls).filter_by(slug=slug)
-    slug_existing = db.session.scalar(query)
-    
-    while slug_existing:
-      slug = f"{base_slug}-{counter}"
-      counter += 1
-      
-      query = sa.select(cls).filter_by(slug=slug)
-      slug_existing = db.session.scalar(query)
-    
-    return slug
-
-  @property
-  def comment_count(self):
-    query = sa.select(sa.func.count(Comment.id)).where(Comment.article_id == self.id)
-    return db.session.scalar(query)
-  
-class BlockType(db.Model):
-  id: so.Mapped[int] = so.mapped_column(primary_key=True, index=True)
-  name: so.Mapped[str] = so.mapped_column(sa.String(100), unique=True)
-  description: so.Mapped[str] = so.mapped_column(sa.Text(100))
-  label: so.Mapped[Optional[str]] = so.mapped_column(sa.String(100))
-  
-  # Relacionamento Principal: BlockType relacionado ao ArticleBlock
-  article_blocks: so.WriteOnlyMapped[List["ArticleBlock"]] = so.relationship(
-    back_populates="block_type"
-  )
-  
-  created: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
-  modified: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
-  
-  @classmethod
-  def insert_block_types(cls):
-    for block in block_types:
-      query = sa.select(cls).filter_by(name=block["name"])
-      existing_block = db.session.scalar(query)
-      
-      if not existing_block:
-        new_block = cls(name=block["name"], description=block["description"])
-        db.session.add(new_block)
-      db.session.commit()
-      
-  @classmethod
-  def view_block_types(cls):
-    blocks = cls.query.all()
-    
-    for block in blocks:
-      print(block.name)
-  
-class ArticleBlock(db.Model):
-  id: so.Mapped[int] = so.mapped_column(primary_key=True, index=True)
-  content: so.Mapped[Optional[str]] = so.mapped_column(sa.Text)
-  extra: so.Mapped[Optional[str]] = so.mapped_column(sa.JSON)
-  position: so.Mapped[int] = so.mapped_column()
-  
-  # Relacionamento Inverso: ArticleBlock associado ao Article
-  article: so.Mapped[Article] = so.relationship(
-    back_populates="blocks"
-  )
-  article_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Article.id, ondelete="CASCADE"))
-  
-  # Relacionamento Inverso: ArticleBlock associado ao BlockType
-  block_type: so.Mapped[BlockType] = so.relationship(
-    back_populates="article_blocks"
-  )
-  block_type_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(BlockType.id, ondelete="CASCADE"))
-  
-  created: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
-  modified: so.Mapped[Optional[datetime]] = so.mapped_column(default=datetime.utcnow)
-  
-class Comment(db.Model):
+class Suggestion(db.Model):
   id: so.Mapped[int] = so.mapped_column(primary_key=True, index=True)
   content: so.Mapped[str] = so.mapped_column(sa.Text)
   
-  # Relacionamento Inverso: Comment associado ao Situation
-  comment_situation: so.Mapped[Situation] = so.relationship(
-    back_populates="comments"
+  # Relacionamento Inverso: Suggestion associado ao Situation
+  suggestion_situation: so.Mapped[Situation] = so.relationship(
+    back_populates="suggestions"
   )
-  comment_situation_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Situation.id, ondelete="CASCADE"))
+  suggestion_situation_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Situation.id, ondelete="CASCADE"))
   
-  # Relacionamento Inverso: Comment associado ao User
+  # Relacionamento Inverso: Suggestion associado ao User
   user: so.Mapped[User] = so.relationship(
-    back_populates="comments"
+    back_populates="suggestions"
   )
   user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id, ondelete="CASCADE"))
   
-  # Relacionamento Inverso: Comment associado ao Article
-  article: so.Mapped[Article] = so.relationship(
-    back_populates="comments"
+  likes_count: so.Mapped[Optional[int]] = so.mapped_column(default = 0)
+
+  # Relacionamento principal: Likes relacionado ao Suggestion
+  likes: so.WriteOnlyMapped["Likes"] = so.relationship(
+    back_populates = "suggestion", 
+    passive_deletes = True
   )
-  article_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Article.id, ondelete="CASCADE"))
   
   created: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
   modified: so.Mapped[Optional[datetime]] = so.mapped_column(default=datetime.utcnow)
   
   def __init__(self, **kwargs):
-    super(Comment, self).__init__(**kwargs)
+    super(Suggestion, self).__init__(**kwargs)
     
-    if self.comment_situation is None:
-      self.comment_situation = db.session.scalar(
-        sa.select(Situation).filter_by(default=True, entity_type="comment")
+    if self.suggestion_situation is None:
+      self.suggestion_situation = db.session.scalar(
+        sa.select(Situation).filter_by(default=True, entity_type="suggestion")
       )
+  
+class Likes(db.Model):
+  id: so.Mapped[int] = so.mapped_column(primary_key=True)
+  
+  # Relacionamento inverso: User associado ao Likes
+  user: so.Mapped[User] = so.relationship(
+    back_populates = "likes"
+  )
+  # Chave estrangeira referenciando o ID do User
+  user_id: so.Mapped[int] = so.mapped_column(
+    sa.ForeignKey(
+      User.id,
+      ondelete="CASCADE"
+    )
+  )
+
+  # Relacionamento inverso: Comment associado ao Likes
+  suggestion: so.Mapped[Suggestion] = so.relationship(
+    back_populates = "likes"
+  )
+  # Chave estrangeira referenciando o ID do Suggestion
+  suggestion_id: so.Mapped[int] = so.mapped_column(
+    sa.ForeignKey(
+      Suggestion.id, 
+      ondelete="CASCADE"
+    )
+  )
+  
+class SocialMedia(db.Model):
+  id: so.Mapped[int] = so.mapped_column(primary_key=True)
+  name: so.Mapped[str] = so.mapped_column(sa.String(35))
+  icon: so.Mapped[Optional[str]] = so.mapped_column(sa.String(60))
+  url: so.Mapped[str] = so.mapped_column(sa.String(250), unique=True)
+  is_active: so.Mapped[Optional[bool]] = so.mapped_column(default = True)
+  order_index: so.Mapped[Optional[int]] = so.mapped_column()
+
+  # Relacionamento inverso: Situation associado ao SocialMedia
+  social_media_situation: so.Mapped["Situation"] = so.relationship(
+    back_populates = "social_media"
+  )
+
+  # Chave estrangeira referenciando o ID da Situation
+  social_media_situation_id: so.Mapped[int] = so.mapped_column(
+    sa.ForeignKey(
+      Situation.id, 
+      ondelete="CASCADE"
+    )
+  )
+  
+  # Relacionamento inverso: Profile associado ao SocialMedia
+  profile: so.Mapped["Profile"] = so.relationship(
+    back_populates="social_media"
+  )
+  # Chave estrangeira referenciando o ID da Profile
+  profile_id: so.Mapped[int] = so.mapped_column(
+    sa.ForeignKey(Profile.id, ondelete="CASCADE")
+  )
+  
+  created: so.Mapped[datetime] = so.mapped_column(default=datetime.utcnow)
+  modified: so.Mapped[Optional[datetime]] = so.mapped_column(default=datetime.utcnow)
+  
+  def __init__(self, **kwargs):
+    super(SocialMedia, self).__init__(**kwargs)
+    
+    social_media_situation = db.session.scalar(sa.select(Situation).filter_by(default=True, entity_type="social_media"))
+    self.social_media_situation = social_media_situation
+  
+class Message(db.Model):
+  id: so.Mapped[int] = so.mapped_column(primary_key = True)
+  is_read: so.Mapped[bool] = so.mapped_column(default=False)
+
+  # Relacionamento inverso: User associado ao Message
+  messages_author: so.Mapped[User] = so.relationship(
+    foreign_keys="Message.sender_id", 
+    back_populates = "messages_sent"
+  )
+  # Chave estrangeira referenciando o ID do User
+  sender_id: so.Mapped[int] = so.mapped_column(
+    sa.ForeignKey(
+      User.id, 
+      ondelete="CASCADE"
+    ), 
+    index = True
+  )
+
+  # Relacionamento inverso: User associado ao Message
+  messages_recipient: so.Mapped[User] = so.relationship(
+    foreign_keys="Message.recipient_id", 
+    back_populates = "messages_received"
+  )
+  # Chave estrangeira referenciando o ID do User
+  recipient_id: so.Mapped[int] = so.mapped_column(
+    sa.ForeignKey(
+      User.id, 
+      ondelete="CASCADE"
+    ), 
+    index = True
+  )
+  
+  message_body: so.Mapped[str] = so.mapped_column(sa.String(500))
+  timestamp: so.Mapped[datetime] = so.mapped_column(default = lambda: datetime.now(timezone.utc))
+  
+  def __repr__(self):
+    return f"<Messsage {self.message_body}>"
+    
+class Notification(db.Model):
+  id: so.Mapped[int] = so.mapped_column(primary_key = True)
+  name: so.Mapped[str] = so.mapped_column(sa.String(130), index=True)
+
+  # Chave estrangeira referenciando o ID do User
+  user_id: so.Mapped[int] = so.mapped_column(
+    sa.ForeignKey(
+      User.id, 
+      ondelete="CASCADE"
+    ), 
+    index=True
+  )
+  
+  timestamp: so.Mapped[float] = so.mapped_column(default = time, index=True)
+  payload_json: so.Mapped[str] = so.mapped_column(sa.Text)
+
+  # Relacionamento inverso: User associado ao Notification
+  user: so.Mapped[User] = so.relationship(
+    back_populates = "notifications"
+  )
+  
+  def get_data(self):
+    return json.loads(str(self.payload_json))
   
 class AnonymousUser(AnonymousUserMixin):
   def can(self, permissions):

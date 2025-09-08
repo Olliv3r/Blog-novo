@@ -28,7 +28,7 @@
         {% if current_user.is_authenticated %}
         {% if current_user.is_moderator() or current_user.is_administrator() %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">Painel</a>
+          <a class="nav-link" href="{{ url_for('admin.admin') }}">Painel</a>
         </li>
         {% endif %}
         <li class="nav-item">

@@ -1,0 +1,21 @@
+.user {
+  margin: 100px 0;
+}
+.user-links {
+  margin: 0;
+  padding: 0;
+}
+.user-links a i {
+  font-size: 1.5rem;
+  color: #000;
+}
+
+.user-links a:not(:first-child) {
+  margin-left: 5px;
+}
+
+@media (max-width: 768px) {
+  .user {
+    width: 80% !important;
+  }
+}

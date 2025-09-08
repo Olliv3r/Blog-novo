@@ -1,0 +1,196 @@
+{% from "bootstrap4/utils.html" import render_messages, render_static %}
+
+{% extends "sidebar.html" %}
+
+{% block dashboard_content %}
+
+<div class="d-flex align-items-center">
+  <div class="mr-auto p-2">
+    <h2 class="lead">Sugestôes</h2>
+  </div>
+  <div class="p-2">
+    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddSuggestion">
+      Adicionar
+    </button>
+  </div>
+</div>
+
+<div id="alert" role="alert"></div> 
+
+<form class="d-flex mb-3 btn-group-sm" id="formSearchSuggestion">
+  <input class="form-control me-2" type="text" placeholder="Buscar pelo autor" name="word" id="word" aria-label="Search">
+</form>
+
+<div id="suggestions"></div>
+
+<!-- Modal add comment -->
+<div class="modal fade" id="modalAddSuggestion" tabindex="-1" aria-labelledby="modalAddSuggestionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAddSuggestionLabel">Adicionar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" id="formAddUser">
+          <div class="form-row p-3">
+            <div class="form-group col-12">
+              <label for="name" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="name" name="name">
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="email" class="form-label">E-mail</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+              <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="password" class="form-label">Senha</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+              <small id="passwordHelp" class="form-text text-muted"></small>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="password2" class="form-label">Confirme a senha</label>
+              <input type="password" class="form-control" id="password2" name="password2" required>
+              <small id="password2Help" class="form-text text-muted"></small>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="situation_user" class="form-label">Situação</label>
+              <select id="situation_user" name="situation_user" class="form-control" required>
+              </select>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="role" class="form-label">Função</label>
+              <select id="role" name="role" class="form-control" required></select>
+            </div>
+            
+            <div class="form-group col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="confirmed" name="confirmed">
+                <label class="form-check-label" for="confirmed">
+                  Confirmar a conta
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="btnSave" type="submit" class="btn btn-success" form="formAddUser">Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal edit comment -->
+<div class="modal fade" id="modalEditSuggestion" tabindex="-1" aria-labelledby="modalEditSuggestionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditSuggestionLabel">Editar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" id="formEditUser" method="POST">
+          <div class="form-row p-3">
+            <div class="form-group col-12">
+              <label for="name" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="name" name="name">
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="email" class="form-label">E-mail</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+              <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="situation_user" class="form-label">Situação</label>
+              <select id="situation_user" name="situation_user" class="form-control" required>
+              </select>
+            </div>
+            
+            <div class="form-group col-12">
+              <label for="role" class="form-label">Função</label>
+              <select id="role" name="role" class="form-control" required></select>
+            </div>
+            
+            <div class="form-group col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="confirmed" name="confirmed">
+                <label class="form-check-label" for="confirmed">
+                  Confirmar a conta
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="save" type="submit" data-save class="btn btn-warning" form="formEditUser">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal delete comment -->
+<div class="modal fade" id="modalDeleteSuggestion" tabindex="-1" aria-labelledby="modalDeleteSuggestionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDeleteSuggestionLabel">APAGAR ÍTEM</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja apagar este ítem?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="save">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal view comment -->
+<div class="modal fade" id="modalViewSuggestion" tabindex="-1" aria-labelledby="modalViewSuggestionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalViewSuggestionLabel">Visualizar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="spinner" class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Carregando...</span>
+          </div>
+        </div>
+        <div id="modal-content" class="d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="save" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+  {{ super() }}
+  {{ render_static("js", "js/suggestions.js") }}
+{% endblock %}

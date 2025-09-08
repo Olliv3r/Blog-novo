@@ -16,3 +16,13 @@ def permission_required(permission):
   
 def admin_required(f):
   return permission_required(Permission.ADMIN)(f)
+  
+def any_permission_required(*permissions):
+  def decorator(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+      if not any(current_user.can(permission) for permission in permissions):
+        abort(403)
+      return f(*args, *(kwargs))
+    return decorated_function
+  return decorator

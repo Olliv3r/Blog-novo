@@ -6,6 +6,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.auth.forms import SignupForm, SigninForm, ResetPasswordEmailForm, ResetPasswordForm
 from app.models import User
 from app.email import send_email_confirm_account, send_email_confirm_email, send_email_reset_password
+from datetime import datetime
 
 # RETORNA O ID DO USUARIO LOGADO
 def get_current_user_id():
@@ -223,6 +224,8 @@ def profile_email_cancel():
   db.session.commit()
   return jsonify(status="success", message="Atualização de email cancelada", color="success")
 
+#### Atualiza a senha do perfil ####
+
 # RENDERIZA PAGINA DE SENHA NO PERFIL DO USUÁRIO - AJAX
 @bp.route("/profile/password/view", methods=["GET"])
 @login_required
@@ -233,7 +236,7 @@ def profile_password_view():
     )
   )
   
-# ATUALIZA SENHA DO USUÁRIO - AJAX
+# ATUALIZA SENHA DO USUÁRIO NO PERFILb- AJAX
 @bp.route("/profile/password", methods=["POST"])
 @login_required
 def profile_password():
@@ -243,15 +246,25 @@ def profile_password():
   password2 = request.form.get("password2")
   
   user = User.query.get(user_id)
-  if user is None or not user.check_password(current_password):
+  
+  # Verifica existencia do USUARIO
+  if user is None:
+    return jsonify(status="error", message="Usuário não encontrado!", color="danger")
+  
+  # Se for o próprio usuário (não o admin ou admin mexendo em si mesmo)
+  # if user == current_user and not user.check_password(current_password):
+  #   return jsonify(status="error", message="Senha atual incorreta!", color="danger")
+  if not user.check_password(current_password):
     return jsonify(status="error", message="Senha atual incorreta!", color="danger")
   
   if password != password2:
-    return jsonify(status="error", message="As senha não conferem!", color="danger")
+    return jsonify(status="error", message="As senhas não conferem!", color="danger")
   
   if len(password) < 6 or len(password2) < 6:
     return jsonify(status="error", message="O tamanho mínimo da senha é 6 caracteres!", color="danger")
   
   user.set_password(password)
+  user.modified = datetime.utcnow()
   db.session.commit()
   return jsonify(status="success", message="Senha atualizada com sucesso!", color="success")
+  

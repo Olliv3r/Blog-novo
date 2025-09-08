@@ -1,0 +1,260 @@
+{% from "bootstrap4/utils.html" import render_messages, render_static %}
+
+{% extends "sidebar.html" %}
+
+{% block dashboard_content %}
+
+<!-- Anti-autofill para Firefox/Chrome teimosos -->
+<input type="text" style="display:none" name="fake_login">
+<input type="password" style="display:none" name="fake_password">
+
+<div>
+  <div class="mr-auto p-2">
+    <h2 class="display-4 titulo">Perfis</h2>
+  </div>
+</div>
+
+<!-- Area de alertas personalizados -->
+<div id="alert" role="alert"></div> 
+
+<!-- Area de pesquisa interna -->
+<form class="d-flex mb-3 btn-group-sm" id="formSearchProfile">
+  <input class="form-control me-2" type="text" placeholder="Buscar por um dado de perfil" name="word" id="word" aria-label="Search">
+</form>
+
+<!-- Conteúdo da tabela e paginação -->
+<div id="profiles"></div>
+
+<!-- MODAIS: -->
+
+<!-- Modal (Visualiza dados de um perfil) -->
+<div class="modal fade" id="modalViewProfile" tabindex="-1" aria-labelledby="modalViewProfileLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalViewProfileLabel">Visualizar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="spinner" class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Carregando...</span>
+          </div>
+        </div>
+        <div id="modal-content" class="d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="save" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edição de Perfil -->
+<div class="modal fade" id="modalEditProfile" tabindex="-1" role="dialog" aria-labelledby="modalEditProfileLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditProfileLabel">Editar Perfil - <span id="modalUserName"></span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Navegação por abas -->
+        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="personal-tab" data-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Dados Pessoais</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="email-tab" data-toggle="tab" href="#email" role="tab" aria-controls="email" aria-selected="false">E-mail</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="photo-tab" data-toggle="tab" href="#photo" role="tab" aria-controls="photo" aria-selected="false">Foto</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="social-tab" data-toggle="tab" href="#social" role="tab" aria-controls="social" aria-selected="false">Redes Sociais</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="password-tab" data-toggle="tab" href="#password" role="tab" aria-controls="password" aria-selected="false">Senha</a>
+          </li>
+        </ul>
+        
+        <!-- Conteúdo das abas -->
+        <div class="tab-content p-3" id="profileTabsContent">
+          <!-- Aba Dados Pessoais -->
+          <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+            <form id="formEditInfo">
+              <input type="hidden" name="user_id" id="personalUserId">
+              <div class="form-group">
+                <label for="name">Nome de exibição</label>
+                <input type="text" class="form-control" id="name" name="name">
+              </div>
+              <div class="form-group">
+                <label for="occupation">Ocupação</label>
+                <input type="text" class="form-control" id="occupation" name="occupation">
+              </div>
+              <div class="form-group">
+                <label for="location">Localização</label>
+                <input type="text" class="form-control" id="location" name="location">
+              </div>
+              <div class="form-group">
+                <label for="website">Website</label>
+                <input type="url" class="form-control" id="website" name="website">
+              </div>
+              <div class="form-group">
+                <label for="about_me">Sobre mim</label>
+                <textarea class="form-control" id="about_me" name="about_me" rows="3"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Salvar dados pessoais</button>
+            </form>
+          </div>
+          
+          <!-- Aba E-mail -->
+          <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
+            <form id="formEditEmail">
+              <input type="hidden" name="user_id" id="emailUserId">
+              <div class="form-group">
+                <label for="email">E-mail atual</label>
+                <input type="email" class="form-control" id="email" readonly>
+              </div>
+              <div class="form-group">
+                <label for="newEmail">Novo e-mail</label>
+                <input type="email" class="form-control" id="newEmail" name="new_email">
+              </div>
+              <button type="submit" class="btn btn-primary">Alterar e-mail</button>
+            </form>
+          </div>
+        
+          <!-- Aba Foto -->
+          <div class="tab-pane fade" id="photo" role="tabpanel" aria-labelledby="photo-tab">
+            <form id="formEditPhoto" enctype="multipart/form-data">
+              <div class="form-group">
+                <label>Foto atual</label>
+                <div>
+                  <img id="croppedImagePreview" src="" class="img-thumbnail" width="150" style="max-height: 150px; object-fit: cover; cursor: pointer;" title="Clique para selecionar uma nova imagem">
+                  <img src="" style="display: none;" id="currentImageUrl">
+                </div>
+                <small class="form-text text-muted">Clique sobre a foto para selecionar a nova imagem</small>
+              </div>
+              
+              <input type="file" id="imageUpload" name="image_upload" accept="image/*" style="display: none;">
+              
+              <div class="form-group">
+                <label for="image_url">URL da imagem</label>
+                <input type="url" class="form-control" id="image_url" name="image_url" placeholder="https://exemplo.com/sua-imagem.jpg">
+              </div>
+              
+              <button type="submit" class="btn btn-sm btn-warning" id="submitPhoto">
+                <i class="fas fa-upload"></i> Salvar
+              </button>
+              <button type="button" class="btn btn-sm btn-danger" id="deletePhoto">
+                <i class="fas fa-trash"></i> Excluir
+              </button>
+              <button type="button" class="btn btn-sm btn-info" id="cancelPhoto">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+            </form>
+            
+            <div id="sub-alert" class="alert mt-3"></div>
+          </div>
+          
+          <!-- Aba Redes Sociais -->
+          <div class="tab-pane fade" id="social" role="tabpanel" aria-labelledby="social-tab">
+          </div>
+          
+          <!-- Aba Senha -->
+          <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+            <form id="formEditPassword">
+              <input type="hidden" name="user_id" id="passwordUserId">
+              <div class="form-group">
+                <label for="newPassword">Nova senha</label>
+                <input type="password" class="form-control" id="newPassword" name="new_password" required>
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirmar nova senha</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="forceLogout" name="force_logout">
+                <label class="form-check-label" for="forceLogout">Forçar logout do usuário</label>
+              </div>
+              <button type="submit" class="btn btn-primary mt-3">Alterar Senha</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pra selecionar e Recortar imagem -->
+<!-- <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cropModalLabel">Recortar Imagem</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body p-1">
+        <div class="img-container">
+          <img class="img-fluid" id="imageToCrop" src="">
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-sm btn-primary" id="cropButton">Recortar</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- Modal (Visualiza dados de uma sm) -->
+<div class="modal fade" id="modalViewSm" tabindex="-1" aria-labelledby="modalViewSmLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalViewSmLabel">Visualizar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="spinner" class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Carregando...</span>
+          </div>
+        </div>
+        <div id="modal-content" class="d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="save" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block custom_js %}
+  {{ super() }}
+  <script>
+    const current_user_id = {{ current_user.id }};
+  </script>
+  {{ render_static("js", "js/cropper.min.js") }}
+  {{ render_static("js", "js/formatNow.js") }}
+  {{ render_static("js", "js/profiles.js") }}
+  {{ render_static("js", "js/button.js") }}
+  {{ render_static("js", "js/alertt.js") }}
+{% endblock %}

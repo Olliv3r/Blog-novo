@@ -4,11 +4,8 @@
 <html lang="pt-br">
   <head>
   {% block head %}
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Place the first <script> tag in your HTML's <head> -->
-    
     {% block styles %}
       {{ render_static("css", "css/fontawesome.css", local=True) }}
       {{ render_static("css", "css/style.css", local=True) }}
@@ -16,7 +13,9 @@
       {{ render_static("css", "css/brands.css", local=True) }}
       {{ render_static("css", "css/regular.css", local=True) }}
       {{ render_static("css", "css/ionicons.min.css", local=True) }}
+      
       {% block custom_css %}{% endblock %}
+      
       {{ moment.include_moment() }}
       {{ moment.locale("pt") }}
       {{ bootstrap.load_css() }}
@@ -44,15 +43,22 @@
       {{ render_static("js", "js/jquery-3.7.1.js", local=True) }}
       {{ bootstrap.load_js() }}
       {{ render_static("js", "js/fontawesome.min.js", local=True) }}
-      {{ render_static("js", "js/alertt.js", local=True) }}
-      {{ render_static("js", "js/button.js", local=True) }}
-      {{ render_static("js", "js/formatNow.js", local=True) }}
       
       {% block custom_js %}{% endblock %}
+      
+      {#{% if current_user.is_authenticated %}
+        <script>
+          var isAuthenticated = true;
+          var notificationsUrl = "{{ url_for('users.notifications') }}";
+        </script>
+      {% else %}
+        <script>
+          var isAuthenticated = true;
+        </script>
+      {% endif %}#}
       
       <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
       <script>eruda.init();</script>
     {% endblock %}
-    
   </body>
 </html>

@@ -2,7 +2,7 @@ $(document).ready(function() {
   //FUNÇÃO PRA CARREGAR LISTA PAPÉIS DE USUÁRIOS NO PAINEL ADMIN
   function load_roles_users() {
     $.ajax({
-      url: "/dashboard/users/roles/render",
+      url: "/admin/users/roles/render",
       type: "GET",
       success: function(html) {
         $("#roles").html(html);
@@ -47,9 +47,9 @@ $(document).ready(function() {
   //FUNÇÃO PRA CARREGAR PAPÉIS DE USUÁRIOS PESQUISADOS
   function load_search_roles_users(word) {
     $.ajax({
-      url: "/dashboard/users/roles/search",
+      url: "/admin/users/roles/search",
       type: "GET",
-      data: {word: word},
+      data: {q: word},
       success: function(html) {
         $("#roles").html(html);
         
@@ -123,7 +123,7 @@ $(document).ready(function() {
     let select = $(this).find("#role_situation_id");
     
     $.ajax({
-      url: "/dashboard/users/roles/situations/options",
+      url: "/admin/users/roles/situations/options",
       type: "GET",
       success: function(data) {
         populateSelect(select, data, 1, true);
@@ -143,7 +143,7 @@ $(document).ready(function() {
     button_status($btn, "Adicionando...");
     
     $.ajax({
-      url: "/dashboard/users/roles/create",
+      url: "/admin/users/roles/create",
       type: "POST",
       data: formData,
       processData: false,
@@ -175,7 +175,7 @@ $(document).ready(function() {
     
     setTimeout(() => {
     $.ajax({
-      url: `/dashboard/users/roles/${role_user_id}/view`,
+      url: `/admin/users/roles/${role_user_id}/view`,
       type: "GET",
       success: function(html) {
         $content.html(html);
@@ -202,7 +202,7 @@ $(document).ready(function() {
     $form.data("role_id", role_id);
     
     $.ajax({
-      url: `/dashboard/users/roles/${role_id}/data`,
+      url: `/admin/users/roles/${role_id}/data`,
       type: "GET",
       success: function(data) {
         //Guarda dados do servidor em constantes
@@ -233,7 +233,7 @@ $(document).ready(function() {
     button_status($btn, "Atualizando...");
     
     $.ajax({
-      url: `/dashboard/users/roles/${role_id}/update`,
+      url: `/admin/users/roles/${role_id}/update`,
       type: "POST",
       data: formData,
       processData: false,
@@ -273,7 +273,7 @@ $(document).ready(function() {
     button_status($btn, "Excluindo...");
     
     $.ajax({
-      url: `/dashboard/roles/${role_id}/delete`,
+      url: `/admin/roles/${role_id}/delete`,
       type: "POST",
       success: function(res) {
         button_status($btn, btnText, false);
@@ -285,5 +285,4 @@ $(document).ready(function() {
       }
     });
   });
-  
 });

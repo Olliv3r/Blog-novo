@@ -2,21 +2,27 @@ $(document).ready(function() {
   let maxAttemps = 200;
   let attemps = 0;
   
-  //FUNÇÃO PARA CARREGAR A PÁGINA DE SENHA NO PERFIL DO USUÁRIO
-  function load_profile_password() {
-    $("#profile_password").find("#spinner").removeClass("d-none");
-    $("#profile_password").find("#profile_password_content").addClass("d-none");
-    
-    $.ajax({
-      url: '/auth/profile/password/view',
-      type: 'GET',
-      success: function(html) {
-        $("#profile_password_content").html(html);
-        $("#profile_password").find("#profile_password_content").removeClass("d-none");
-        $("#profile_password").find("#spinner").addClass("d-none");
-      }
-    });
-  }
+  window.Auth = {
+    //FUNÇÃO PARA CARREGAR A PÁGINA DE SENHA NO PERFIL DO USUÁRIO
+    load_profile_password: function() {
+      let $profile = $("#profile_password");
+      let $content = $profile.find("#profile_password_content");
+      let $spinner = $profile.find("#spinner");
+      
+      $spinner.removeClass("d-none");
+      $content.addClass("d-none");
+      
+      $.ajax({
+        url: '/auth/profile/password/view',
+        type: 'GET',
+        success: function(html) {
+          $content.html(html);
+          $content.removeClass("d-none");
+          $spinner.addClass("d-none");
+        }
+      });
+    }
+  };
   
   //ESCONDE O MINI-MENU(OPÇÔES E EDITAR), MOSTRA O FORMULARIO DO E-MAIL E ESCONDE A AJUDA
   $("#profile_info").on("click", "#btn-edit-email", function() {
@@ -134,15 +140,16 @@ $(document).ready(function() {
   });
   
   //CARREGA FORMULARIO DE SENHA
-  load_profile_password();
+  Auth.load_profile_password();
   
+  // Atualizar a senha no perfil
   $("#profile_password").on("submit", "#FormPassword", function(e) {
     e.preventDefault();
     
     button_status($(this).find("#btn-edit"), "Aguarde...");
     
     if($(this).find("#password").val() !== $(this).find("#password2").val()) {
-      load_profile_password();
+      Auth.load_profile_password();
       
       setTimeout(() => {
         alertt("#password_message", "danger", "As senhas não conferem!");
@@ -151,7 +158,7 @@ $(document).ready(function() {
     }
     
     if ($(this).find("#password").val().length < 6 || $(this).find("#password2").val().length < 6) {
-      load_profile_password();
+      Auth.load_profile_password();
       
       setTimeout(() => {
         alertt("#password_message", "danger", "Tamanho mínimo da senha é 6 caracteres!");
@@ -171,7 +178,7 @@ $(document).ready(function() {
       processData: false,
       contentType: false,
       success: function(res) {
-        load_profile_password();
+        Auth.load_profile_password();
         
         setTimeout(() => {
           alertt("#password_message", res.color, res.message);
